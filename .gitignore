@@ -8,8 +8,7 @@
 *.tar.gz
 *.rar
 hs_err_pid*
-mvnw
-mvnw.cmd
+mvnw*
 
 out/
 target/
