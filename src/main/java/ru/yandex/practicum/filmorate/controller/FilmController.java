@@ -14,7 +14,7 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);другом порядке с тем, который вы указали, ссылаясь на спецификацию языка Java (JLS). Например,
     private final FilmService filmService;
 
 
