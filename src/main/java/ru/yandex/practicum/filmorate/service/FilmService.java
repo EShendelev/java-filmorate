@@ -65,7 +65,7 @@ public class FilmService {
         if (film.getReleaseDate().isBefore(minDate)) {
             throw new FilmValidateFailException("Дата релиза не может быть ранее 28.12.1985 г.");
         }
-        if (film.getDuration().isNegative()) {
+        if (film.getDuration() <= 0) {
             throw new FilmValidateFailException("Продолжительность фильма должна быть положительной");
         }
     }
