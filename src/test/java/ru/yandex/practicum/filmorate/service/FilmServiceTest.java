@@ -23,7 +23,6 @@ class FilmServiceTest {
         Film film = new Film(1, "", "description", LocalDate.now(), 1);
         assertThrows(FilmValidateFailException.class, () -> {
             filmService.addFilm(film);
-
         });
     }
 
@@ -43,7 +42,6 @@ class FilmServiceTest {
         assertThrows(FilmValidateFailException.class, () -> {
             filmService.addFilm(film);
         });
-
     }
 
     @Test
@@ -54,6 +52,4 @@ class FilmServiceTest {
             filmService.addFilm(film);
         });
     }
-
-
 }
