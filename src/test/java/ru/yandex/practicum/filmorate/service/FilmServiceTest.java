@@ -12,10 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class FilmServiceTest {
 
     FilmService filmService;
+
     @BeforeEach
     void beforeEach() {
         filmService = new FilmService();
     }
+
     @Test
     void addFilmWithEmptyName() {
         Film film = new Film(1, "", "description", LocalDate.now(), 1);
@@ -41,7 +43,7 @@ class FilmServiceTest {
         assertThrows(FilmValidateFailException.class, () -> {
             filmService.addFilm(film);
         });
-        
+
     }
 
     @Test
