@@ -1,7 +1,10 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.UserNotExistException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -12,13 +15,11 @@ import java.util.Collection;
 public class UserController {
 
     private final UserService userService;
-
+    private final static Logger log = LoggerFactory.getLogger(UserController.class);
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
-    @Autowired
 
 
     @GetMapping
@@ -36,9 +37,16 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    @GetMapping("/user/{userMail}")
-    public User getUser(@PathVariable("userEmail") String userEmail) {
-        return userService.findUserByEmail(userEmail);
+    @GetMapping("/user/{id}")
+    public User getUser(@PathVariable("id") int id) {
+        User user = null;
+        try {
+            user = userService.findUserById(id);
+        } catch (UserNotExistException e) {
+            log.debug(e.getMessage());
+        }
+        return user;
     }
+
 
 }

@@ -1,21 +1,22 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.FilmNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
+    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
 
-
-    Film film = new Film(1, "Avatar", "cool film", LocalDateTime.now(), Duration.ofMinutes(180));
 
     @Autowired
     public FilmController(FilmService filmService) {
@@ -25,22 +26,34 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
+        log.debug("find all films");
         return filmService.findAll();
     }
 
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
-        return filmService.addFilm(film);
+        Film addedFilm = filmService.addFilm(film);
+        log.debug("film added");
+        return addedFilm;
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
-        return filmService.updateFilm(film);
+        Film updFilm = filmService.updateFilm(film);
+        log.debug("film updated");
+        return updFilm;
     }
 
     @GetMapping("/film/{id}")
     public Film getFilm(@PathVariable("id") int id) {
-        return filmService.findFilmById(id);
+        Film findedFilm = null;
+        try {
+            findedFilm = filmService.findFilmById(id);
+        } catch (FilmNotExistException e) {
+            log.debug(e.getMessage());
+        }
+        log.debug("film №" + id + " finded");
+        return findedFilm;
     }
 
 }
