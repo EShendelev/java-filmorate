@@ -34,7 +34,7 @@ class UserServiceTest {
         userService.createUser(user);
         assertEquals("Login", user.getName());
     }
-    
+
     @Test
     void createUserWithWrongLoginTest() {
         User user = new User(1, "email@emal.ru", "Log in", "Name", LocalDate.now());
