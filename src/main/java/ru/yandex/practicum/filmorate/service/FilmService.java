@@ -23,20 +23,19 @@ public class FilmService {
     public Film addFilm(Film film) {
         int id = FilmIdProvider.getIncrementId();
         film.setId(id);
-        try {
-            validateFilm(film);
-        } catch (FilmValidateFailException e) {
-            log.debug(e.getMessage());
+        if (validateFilm(film) != null) {
+            throw new FilmValidateFailException(validateFilm(film));
         }
         films.put(id, film);
         return film;
     }
 
     public Film updateFilm(Film film) {
-        try {
-            validateFilm(film);
-        } catch (FilmValidateFailException e) {
-            log.debug(e.getMessage());
+        if (!films.containsKey(film.getId())) {
+            throw new FilmNotExistException(String.format("Фильм с  id %d не найден", film.getId()));
+        }
+        if (validateFilm(film) != null) {
+            throw new FilmValidateFailException(validateFilm(film));
         }
         films.put(film.getId(), film);
         return film;
@@ -53,20 +52,21 @@ public class FilmService {
         return films.get(id);
     }
 
-    private void validateFilm(Film film) throws FilmValidateFailException {
+    private String validateFilm(Film film) {
         final LocalDate minDate = LocalDate.of(1895, 12, 28);
         final int maxLen = 200;
         if (film.getName().isBlank()) {
-            throw new FilmValidateFailException("Название не может быть пустым");
+            return ("Название не может быть пустым");
         }
         if (film.getDescription().length() > maxLen) {
-            throw new FilmValidateFailException("Максимальная длина описания - 200 символов.");
+            return ("Максимальная длина описания - 200 символов.");
         }
         if (film.getReleaseDate().isBefore(minDate)) {
-            throw new FilmValidateFailException("Дата релиза не может быть ранее 28.12.1985 г.");
+            return ("Дата релиза не может быть ранее 28.12.1985 г.");
         }
         if (film.getDuration() <= 0) {
-            throw new FilmValidateFailException("Продолжительность фильма должна быть положительной");
+            return ("Продолжительность фильма должна быть положительной");
         }
+        return null;
     }
 }
