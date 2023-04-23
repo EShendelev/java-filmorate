@@ -52,7 +52,6 @@ public class UserController {
         } catch (UserNotExistException e) {
             log.info(e.getMessage());
         }
-
         return user;
     }
 

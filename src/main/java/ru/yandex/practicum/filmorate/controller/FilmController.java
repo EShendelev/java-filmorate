@@ -17,7 +17,6 @@ public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final FilmService filmService;
 
-    
 
     @Autowired
     public FilmController(FilmService filmService) {
@@ -56,5 +55,4 @@ public class FilmController {
         log.info("film №" + id + " finded");
         return findedFilm;
     }
-
 }
