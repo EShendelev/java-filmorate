@@ -17,6 +17,7 @@ public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final FilmService filmService;
 
+    
 
     @Autowired
     public FilmController(FilmService filmService) {
@@ -26,21 +27,21 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
-        log.debug("find all films");
+        log.info("find all films");
         return filmService.findAll();
     }
 
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
         Film addedFilm = filmService.addFilm(film);
-        log.debug("film added");
+        log.info("film added");
         return addedFilm;
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody Film film) {
         Film updFilm = filmService.updateFilm(film);
-        log.debug("film updated");
+        log.info("film updated");
         return updFilm;
     }
 
@@ -50,9 +51,9 @@ public class FilmController {
         try {
             findedFilm = filmService.findFilmById(id);
         } catch (FilmNotExistException e) {
-            log.debug(e.getMessage());
+            log.info(e.getMessage());
         }
-        log.debug("film №" + id + " finded");
+        log.info("film №" + id + " finded");
         return findedFilm;
     }
 

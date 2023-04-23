@@ -25,17 +25,22 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
+        log.info("find all users");
         return userService.findAll();
     }
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+        User crUser = userService.createUser(user);
+        log.info("create user " + crUser.getId());
+        return crUser;
     }
 
     @PutMapping
     public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+        User upUser = userService.updateUser(user);
+        log.info("User id " + upUser.getId() + " update");
+        return upUser;
     }
 
     @GetMapping("/user/{id}")
@@ -43,9 +48,11 @@ public class UserController {
         User user = null;
         try {
             user = userService.findUserById(id);
+            log.info("User id " + user.getId() + " found");
         } catch (UserNotExistException e) {
-            log.debug(e.getMessage());
+            log.info(e.getMessage());
         }
+
         return user;
     }
 
