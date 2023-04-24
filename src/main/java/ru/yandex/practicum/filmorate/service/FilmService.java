@@ -18,9 +18,9 @@ import ru.yandex.practicum.filmorate.service.utils.FilmIdProvider;
 @Service
 public class FilmService {
     private final Map<Integer, Film> films = new HashMap<>();
-    final static LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
-    final static int MAX_LEN = 200;
-    
+    static final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
+    static final int MAX_LEN = 200;
+
     public Film addFilm(Film film) {
         int id = FilmIdProvider.getIncrementId();
         film.setId(id);
