@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotExistException;
 import ru.yandex.practicum.filmorate.exception.UserNotExistException;
@@ -18,19 +16,13 @@ import java.util.regex.Pattern;
 @Service
 public class UserService {
     private final Map<Integer, User> users = new HashMap<>();
-    private static final Logger log = LoggerFactory.getLogger(FilmService.class);
 
     public Collection<User> findAll() {
         return users.values();
     }
 
     public User createUser(User user) {
-        if (validateUser(user) != null) {
-            throw new UserValidateFailException(validateUser(user));
-        }
-        if (user.getName() == null) {
-            user.setName(user.getLogin());
-        } else if (user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         int id = UserIdProvider.getIncrementId();
@@ -43,9 +35,6 @@ public class UserService {
         if (!users.containsKey(user.getId())) {
             throw new FilmNotExistException(String.format("Пользователь с  id %d не найден", user.getId()));
         }
-        if (validateUser(user) != null) {
-            throw new UserNotExistException(validateUser(user));
-        }
         users.put(user.getId(), user);
         return user;
     }
@@ -57,25 +46,14 @@ public class UserService {
         return users.get(id);
     }
 
-    private String validateUser(User user) {
-        if (user.getEmail().isBlank()) {
-            return "Email не может быть пустым";
-        } else if (!emailValidate(user.getEmail())) {
-            return "Email должен быть в формате email@domain.com";
-        }
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            return "Логин не должен быть пустым или содержать пробелы";
+    public boolean validateUser(User user) {
+        if (user.getLogin() == null || user.getLogin().isBlank()
+                || user.getLogin().contains(" ")) {
+            throw new UserValidateFailException("Логин не должен быть пустым или содержать пробелы");
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
-            return "Дата рождения не может быть в будущем";
+            throw new UserValidateFailException("Дата рождения не может быть в будущем");
         }
-        return null;
-    }
-
-    private boolean emailValidate(String email) {
-        final String emailValidRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
-        return Pattern.compile(emailValidRegex)
-                .matcher(email)
-                .matches();
+        return true;
     }
 }

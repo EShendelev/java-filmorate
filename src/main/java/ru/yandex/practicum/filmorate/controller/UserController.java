@@ -1,20 +1,20 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.UserNotExistException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
+import javax.validation.Valid;
 import java.util.Collection;
 
 @RestController
+@Slf4j
 @RequestMapping("/users")
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+
     private final UserService userService;
 
     @Autowired
@@ -30,30 +30,30 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        User crUser = userService.createUser(user);
-        log.info("create user " + crUser.getId());
-        return crUser;
-    }
-
-    @PutMapping
-    public User updateUser(@RequestBody User user) {
-        User upUser = userService.updateUser(user);
-        log.info("User id " + upUser.getId() + " update");
-        return upUser;
-    }
-
-    @GetMapping("/user/{id}")
-    public User getUser(@PathVariable("id") int id) {
-        User user = null;
-        try {
-            user = userService.findUserById(id);
-            log.info("User id " + user.getId() + " found");
-        } catch (UserNotExistException e) {
-            log.info(e.getMessage());
+    public User createUser(@RequestBody @Valid User user) {
+        if (userService.validateUser(user)) {
+            User crUser = userService.createUser(user);
+            log.info("create user: id " + crUser.getId());
+            return crUser;
         }
         return user;
     }
 
+    @PutMapping
+    public User updateUser(@RequestBody @Valid User user) {
+        if (userService.validateUser(user)) {
+            User upUser = userService.updateUser(user);
+            log.info("User id " + upUser.getId() + " update");
+            return upUser;
+        }
+        return user;
+    }
+
+    @GetMapping("/user/{id}")
+    public User getUser(@PathVariable("id") int id) {
+        User user = userService.findUserById(id);
+        log.info("User id " + user.getId() + " found");
+        return user;
+    }
 
 }

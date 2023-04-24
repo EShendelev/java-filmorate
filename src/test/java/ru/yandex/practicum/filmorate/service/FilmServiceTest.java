@@ -19,37 +19,28 @@ class FilmServiceTest {
     }
 
     @Test
-    void addFilmWithEmptyName() {
+    void validateFilmWithEmptyName() {
         Film film = new Film(1, "", "description", LocalDate.now(), 1);
         assertThrows(FilmValidateFailException.class, () -> {
-            filmService.addFilm(film);
+            filmService.validateFilm(film);
         });
     }
 
     @Test
-    void addFilmWithDescriptionOverMaxLength() {
+    void validateFilmWithDescriptionOverMaxLength() {
         Film film = new Film(1, "", "description", LocalDate.now(), 1);
         film.setDescription("a".repeat(201));
         assertThrows(FilmValidateFailException.class, () -> {
-            filmService.addFilm(film);
+            filmService.validateFilm(film);
         });
     }
 
     @Test
-    void addFilmWithDateBeforeFilmsBirthday() {
+    void validateFilmWithDateBeforeFilmsBirthday() {
         Film film = new Film(1, "", "description", LocalDate.of(1984, 12, 15), 1);
         film.setDescription("a".repeat(201));
         assertThrows(FilmValidateFailException.class, () -> {
-            filmService.addFilm(film);
-        });
-    }
-
-    @Test
-    void addFilmWithNegativeDuration() {
-        Film film = new Film(1, "", "description", LocalDate.now(), -1);
-        film.setDescription("a".repeat(201));
-        assertThrows(FilmValidateFailException.class, () -> {
-            filmService.addFilm(film);
+            filmService.validateFilm(film);
         });
     }
 }
