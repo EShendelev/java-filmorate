@@ -1,29 +1,23 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.FilmValidateFailException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class FilmServiceTest {
+class FilmControllerTest {
 
+    FilmController filmController;
     FilmService filmService;
 
     @BeforeEach
     void beforeEach() {
-        filmService = new FilmService();
-    }
-
-    @Test
-    void validateFilmWithEmptyName() {
-        Film film = new Film(1, "", "description", LocalDate.now(), 1);
-        assertThrows(FilmValidateFailException.class, () -> {
-            filmService.validateFilm(film);
-        });
+        filmController = new FilmController(filmService);
     }
 
     @Test
@@ -31,7 +25,7 @@ class FilmServiceTest {
         Film film = new Film(1, "", "description", LocalDate.now(), 1);
         film.setDescription("a".repeat(201));
         assertThrows(FilmValidateFailException.class, () -> {
-            filmService.validateFilm(film);
+            filmController.validateFilm(film);
         });
     }
 
@@ -40,7 +34,7 @@ class FilmServiceTest {
         Film film = new Film(1, "", "description", LocalDate.of(1984, 12, 15), 1);
         film.setDescription("a".repeat(201));
         assertThrows(FilmValidateFailException.class, () -> {
-            filmService.validateFilm(film);
+            filmController.validateFilm(film);
         });
     }
 }

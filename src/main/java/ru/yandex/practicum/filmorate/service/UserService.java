@@ -3,11 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotExistException;
 import ru.yandex.practicum.filmorate.exception.UserNotExistException;
-import ru.yandex.practicum.filmorate.exception.UserValidateFailException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.utils.UserIdProvider;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,16 +41,5 @@ public class UserService {
             throw new UserNotExistException("Пользователь не найден");
         }
         return users.get(id);
-    }
-
-    public boolean validateUser(User user) {
-        if (user.getLogin() == null || user.getLogin().isBlank()
-                || user.getLogin().contains(" ")) {
-            throw new UserValidateFailException("Логин не должен быть пустым или содержать пробелы");
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new UserValidateFailException("Дата рождения не может быть в будущем");
-        }
-        return true;
     }
 }
