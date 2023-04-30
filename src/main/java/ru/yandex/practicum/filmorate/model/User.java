@@ -7,11 +7,12 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 public class User {
-    private int id;
+    private Long id;
     @NotBlank(message = "Email не должен быть пустым")
     @Email(message = "Email должен иметь формат email@domain.net")
     private String email;
@@ -19,4 +20,6 @@ public class User {
     private String login;
     private String name;
     private LocalDate birthday;
+    Set<Long> friends; // Набор с ID друзей
+    Set<Long> likedFilms; //Набор ID фильмов, которые лайкнул пользователь
 }

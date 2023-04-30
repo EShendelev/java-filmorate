@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.utils;
 
 public class FilmIdProvider {
-    private static int id = 0;
+    private static Long id = 0L;
 
-    public static int getIncrementId() {
+    public static Long getIncrementId() {
         return ++id;
     }
 }

@@ -16,7 +16,6 @@ import java.util.Collection;
 @RestController
 @Slf4j
 @RequestMapping("/films")
-
 public class FilmController {
     private final FilmService filmService;
     private final FilmStorage filmStorage;
@@ -56,7 +55,7 @@ public class FilmController {
     }
 
     @GetMapping("/film/{id}")
-    public Film getFilm(@PathVariable("id") int id) {
+    public Film getFilm(@PathVariable("id") Long id) {
         Film findedFilm = filmStorage.findById(id);
         log.info("film № {} found", id);
         return findedFilm;

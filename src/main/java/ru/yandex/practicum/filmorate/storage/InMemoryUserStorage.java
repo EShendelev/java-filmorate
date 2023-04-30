@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Integer, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public Collection<User> findAll() {
@@ -25,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        int id = UserIdProvider.getIncrementId();
+        Long id = UserIdProvider.getIncrementId();
         user.setId(id);
         users.put(id, user);
         return user;
@@ -41,12 +41,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User delete(int id) {
+    public User delete(Long id) {
         return null;
     }
 
     @Override
-    public User findById(int id) throws UserNotExistException {
+    public User findById(Long id) throws UserNotExistException {
         if (!users.containsKey(id)) {
             throw new UserNotExistException("Пользователь не найден");
         }

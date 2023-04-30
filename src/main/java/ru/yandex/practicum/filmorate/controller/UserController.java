@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public User getUser(@PathVariable("id") int id) {
+    public User getUser(@PathVariable("id") Long id) {
         User user = userStorage.findById(id);
         log.info("User id {} found", id);
         return user;

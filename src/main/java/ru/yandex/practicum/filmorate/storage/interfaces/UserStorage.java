@@ -8,6 +8,6 @@ public interface UserStorage {
     Collection<User> findAll();
     User add(User user);
     User update(User user);
-    User delete(int id);
-    User findById(int id);
+    User delete(Long id);
+    User findById(Long id);
 }

@@ -7,16 +7,20 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Data
 @AllArgsConstructor
 public class Film {
-    private int id;
+
+    private Long id;
     @NotBlank(message = "Имя не может быть пустым")
     private String name;
     private String description;
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
+    Set<Long> whoLikes; // Набор ID пользователей поставивших лайк
+    Long likes = (long) whoLikes.size();
 }
