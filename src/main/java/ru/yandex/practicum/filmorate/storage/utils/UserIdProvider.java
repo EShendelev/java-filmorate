@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service.utils;
+package ru.yandex.practicum.filmorate.storage.utils;
 
 public class UserIdProvider {
     private static int id = 0;

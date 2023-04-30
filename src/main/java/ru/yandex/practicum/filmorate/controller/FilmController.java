@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmValidateFailException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
 
 import javax.validation.Valid;
@@ -18,24 +19,26 @@ import java.util.Collection;
 
 public class FilmController {
     private final FilmService filmService;
+    private final FilmStorage filmStorage;
     static final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
     static final int MAX_LEN = 200;
 
     @Autowired
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmService filmService, FilmStorage filmStorage) {
         this.filmService = filmService;
+        this.filmStorage = filmStorage;
     }
 
     @GetMapping
     public Collection<Film> findAll() {
         log.info("find all films");
-        return filmService.findAll();
+        return filmStorage.findAll();
     }
 
     @PostMapping
     public Film addFilm(@RequestBody @Valid Film film) {
         if (validateFilm(film)) {
-            Film crFilm = filmService.addFilm(film);
+            Film crFilm = filmStorage.add(film);
             log.info("film {} id {} added", film.getName(), film.getId());
             return crFilm;
         }
@@ -45,7 +48,7 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@RequestBody @Valid Film film) {
         if (validateFilm(film)) {
-            Film upFilm = filmService.updateFilm(film);
+            Film upFilm = filmStorage.update(film);
             log.info("film id {} updated", film.getId());
             return upFilm;
         }
@@ -54,7 +57,7 @@ public class FilmController {
 
     @GetMapping("/film/{id}")
     public Film getFilm(@PathVariable("id") int id) {
-        Film findedFilm = filmService.findFilmById(id);
+        Film findedFilm = filmStorage.findById(id);
         log.info("film № {} found", id);
         return findedFilm;
     }

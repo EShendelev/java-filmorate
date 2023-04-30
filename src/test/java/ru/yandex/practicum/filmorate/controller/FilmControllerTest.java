@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exception.FilmValidateFailException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
 import java.time.LocalDate;
 
@@ -14,10 +15,11 @@ class FilmControllerTest {
 
     FilmController filmController;
     FilmService filmService;
+    FilmStorage filmStorage;
 
     @BeforeEach
     void beforeEach() {
-        filmController = new FilmController(filmService);
+        filmController = new FilmController(filmService, filmStorage);
     }
 
     @Test
