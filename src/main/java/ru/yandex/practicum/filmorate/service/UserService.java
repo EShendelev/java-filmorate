@@ -5,21 +5,49 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 public class UserService {
     UserStorage userStorage;
+    FilmService filmService;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, FilmService filmService) {
         this.userStorage = userStorage;
+        this.filmService = filmService;
     }
 
-    private User addFriend(Long id, Long friendId) {
-        
-        return userStorage.findById(id);
+    public void addFriend(Long userId, Long friendId) {
+        Set<Long> friendsIds = userStorage.findById(userId).getFriends();
+        Set<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
+        friendsIds.add(friendId);
+        friendsOfFriend.add(userId);
     }
 
-    private User deleteFriend(User user) {
-        return user;
+    public void deleteFriend(Long userId, Long friendId) {
+        Set<Long> friendsIds = userStorage.findById(userId).getFriends();
+        Set<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
+        friendsIds.remove(friendId);
+        friendsOfFriend.remove(userId);
+    }
+
+    public Set<Long> getCommonFriends(Long userId, Long friendId) {
+        Set<Long> friendsIds = userStorage.findById(userId).getFriends();
+        Set<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
+        Set<Long> commonFriends = new HashSet<>();
+
+        if (friendsIds == null) {
+            return new HashSet<>();
+        }
+
+        for (Long fr : friendsIds) {
+            if (friendsOfFriend.contains(fr)) {
+                commonFriends.add(fr);
+            }
+        }
+
+        return commonFriends;
     }
 }
