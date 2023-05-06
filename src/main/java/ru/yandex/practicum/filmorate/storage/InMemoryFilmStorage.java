@@ -14,7 +14,14 @@ import java.util.Map;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
-    protected final Map<Long, Film> films = new HashMap<>();
+    FilmIdProvider idProvider;
+    private final Map<Long, Film> films;
+
+    public InMemoryFilmStorage() {
+        idProvider = new FilmIdProvider();
+        films = new HashMap<>();
+    }
+
     @Override
     public Map<Long, Film> getFilms() {
         return films;
@@ -22,7 +29,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film add(Film film) {
-        Long id = FilmIdProvider.getIncrementId();
+        Long id = idProvider.getIncrementId();
         film.setId(id);
         films.put(id, film);
         return film;

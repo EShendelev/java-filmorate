@@ -19,13 +19,15 @@ class UserControllerTest {
     UserStorage userStorage;
 
     @BeforeEach
+
     void beforeEach() {
         userController = new UserController(userService, userStorage);
     }
 
     @Test
     void validateUserWithWrongBirthdayTest() {
-        User user = new User(1, "email@emal.ru", "Login", "Name", LocalDate.now().plusDays(2));
+        User user = new User(1L, "email@emal.ru", "Login", "Name",
+                LocalDate.now().plusDays(2));
         assertThrows(UserValidateFailException.class, () -> {
             userController.validateUser(user);
         });

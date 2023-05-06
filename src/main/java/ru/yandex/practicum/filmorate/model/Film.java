@@ -21,6 +21,20 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
-    Set<Long> whoLikes; // Набор ID пользователей поставивших лайк
-    Long likes = (long) whoLikes.size();
+    private Set<Long> likes; // Набор ID пользователей поставивших лайк
+
+
+    public Film(Long id, String name, String description, LocalDate releaseDate, int duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+    }
+
+    public Integer getLikesCount()  {
+        return likes.size();
+    }
+
+
 }
