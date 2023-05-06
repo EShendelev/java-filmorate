@@ -7,9 +7,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
-import ru.yandex.practicum.filmorate.storage.utils.Storages;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -21,17 +22,23 @@ public class FilmService {
 
     @Autowired
     FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = Storages.getDefaultFilmStorage();
-        this.userStorage = Storages.getDefaultUserStorage();
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
 
-    private Film addLike(Long filmId, Long userId) {
+    public void doLike(Long filmId, Long userId, @NotNull boolean like) {
         Film film = filmStorage.findById(filmId);
         User user = userStorage.findById(userId);
-
-
-        return null;
+        Set<Long> likes = film.getLikes();
+        Set<Long> userFilms = user.getLikedFilms();
+        if (like) {
+            likes.add(userId);
+            userFilms.add(filmId);
+        } else {
+            likes.remove(userId);
+            userFilms.remove(filmId);
+        }
     }
 
     private Film deleteLike(Film film) {

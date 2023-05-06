@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -35,6 +36,4 @@ public class Film {
     public Integer getLikesCount()  {
         return likes.size();
     }
-
-
 }

@@ -15,7 +15,7 @@ import java.util.Map;
 public class InMemoryFilmStorage implements FilmStorage {
 
     FilmIdProvider idProvider;
-    private final Map<Long, Film> films;
+    protected final Map<Long, Film> films;
 
     public InMemoryFilmStorage() {
         idProvider = new FilmIdProvider();

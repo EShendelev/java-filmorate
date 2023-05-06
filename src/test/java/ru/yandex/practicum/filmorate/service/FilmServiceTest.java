@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
@@ -137,5 +138,29 @@ class FilmServiceTest {
         Object[] sortedId = sortedFilm.stream().map(Film::getId).toArray();
         assertEquals(10, sortedFilm.size());
         assertArrayEquals(new Object[] {11L, 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L}, sortedId);
+    }
+
+    @Test
+    void addLikeTest() {
+        User user = new User(1L, "email@emal.ru", "Login", "Name",
+                LocalDate.now().plusDays(2));
+        Film film = new Film(1L, "1", "description1", LocalDate.now(), 1,
+                new HashSet<Long>(List.of(2L)));
+        filmStorage.add(film);
+        userStorage.add(user);
+        filmService.doLike(1L, 1L, true);
+        assertArrayEquals(new Object[] {1L, 2L}, film.getLikes().toArray());
+    }
+
+    @Test
+    void deleteLikeTest() {
+        User user = new User(1L, "email@emal.ru", "Login", "Name",
+                LocalDate.now().plusDays(2));
+        Film film = new Film(1L, "1", "description1", LocalDate.now(), 1,
+                new HashSet<Long>(List.of(1L, 2L)));
+        filmStorage.add(film);
+        userStorage.add(user);
+        filmService.doLike(1L, 1L, false);
+        assertArrayEquals(new Object[] {2L}, film.getLikes().toArray());
     }
 }
