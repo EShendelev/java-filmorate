@@ -46,11 +46,12 @@ public class FilmService {
         return film;
     }
 
-    public Collection<Film> findPopularFilms(Collection<Film> films, Integer count) {
+    public Collection<Film> findPopularFilms(Integer count) {
+
         if (count == null || count == 0) {
             count = 10;
         }
-        return films.stream()
+        return filmStorage.findAll().stream()
                 .sorted((p0, p1) -> {
                     int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
                     return -1 * comp;

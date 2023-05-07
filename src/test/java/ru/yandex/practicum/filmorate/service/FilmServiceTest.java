@@ -45,7 +45,7 @@ class FilmServiceTest {
         filmStorage.add(film3);
         filmStorage.add(film4);
 
-        Collection<Film> sortedFilm = filmService.findPopularFilms(filmStorage.findAll(), 4);
+        Collection<Film> sortedFilm = filmService.findPopularFilms(4);
         Long[] sortedId = sortedFilm.stream().map(Film::getId).toArray(Long[]::new);
         assertEquals(4, sortedFilm.size());
         assertArrayEquals(sortedId, new Long[] {4L, 3L, 2L, 1L});
@@ -88,7 +88,7 @@ class FilmServiceTest {
         filmStorage.add(film10);
         filmStorage.add(film11);
 
-        Collection<Film> sortedFilm = filmService.findPopularFilms(filmStorage.findAll(), 0);
+        Collection<Film> sortedFilm = filmService.findPopularFilms(0);
         Object[] sortedId = sortedFilm.stream().map(Film::getId).toArray();
         assertEquals(10, sortedFilm.size());
         assertArrayEquals(new Object[] {11L, 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L}, sortedId);
@@ -131,7 +131,8 @@ class FilmServiceTest {
         filmStorage.add(film10);
         filmStorage.add(film11);
 
-        Collection<Film> sortedFilm = filmService.findPopularFilms(filmStorage.findAll(), null);
+
+        Collection<Film> sortedFilm = filmService.findPopularFilms(null);
         Object[] sortedId = sortedFilm.stream().map(Film::getId).toArray();
         assertEquals(10, sortedFilm.size());
         assertArrayEquals(new Object[] {11L, 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L}, sortedId);
