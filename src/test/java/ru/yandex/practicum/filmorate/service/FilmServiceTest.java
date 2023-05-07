@@ -1,12 +1,9 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.storage.utils.Storages;
@@ -49,9 +46,9 @@ class FilmServiceTest {
         filmStorage.add(film4);
 
         Collection<Film> sortedFilm = filmService.findPopularFilms(filmStorage.findAll(), 4);
-        Object[] sortedId = sortedFilm.stream().map(Film::getId).toArray();
+        Long[] sortedId = sortedFilm.stream().map(Film::getId).toArray(Long[]::new);
         assertEquals(4, sortedFilm.size());
-        assertArrayEquals(sortedId, new Object[] {4L, 3L, 2L, 1L});
+        assertArrayEquals(sortedId, new Long[] {4L, 3L, 2L, 1L});
     }
 
     @Test

@@ -13,12 +13,10 @@ import java.util.Set;
 @Service
 public class UserService {
     UserStorage userStorage;
-    FilmService filmService;
 
     @Autowired
-    public UserService(UserStorage userStorage, FilmService filmService) {
+    public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
-        this.filmService = filmService;
     }
 
     public void addFriend(Long userId, Long friendId) {
