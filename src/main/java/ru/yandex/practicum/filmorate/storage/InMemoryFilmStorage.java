@@ -29,7 +29,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         Long id = idProvider.getIncrementId();
         film.setId(id);
         films.put(id, film);
-        film.setLikes(new HashSet<>());
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
         return film;
     }
 
