@@ -26,7 +26,7 @@ class FilmServiceTest {
     void beforeEach() {
         userStorage = Storages.getDefaultUserStorage();
         filmStorage = Storages.getDefaultFilmStorage();
-        filmService = new FilmService(filmStorage, userStorage);
+        filmService = new FilmService(filmStorage);
     }
 
     @Test
@@ -141,7 +141,7 @@ class FilmServiceTest {
     @Test
     void addLikeTest() {
         User user = new User(1L, "email@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(2));
+                LocalDate.now().plusDays(2), new HashSet<>());
         Film film = new Film(1L, "1", "description1", LocalDate.now(), 1,
                 new HashSet<Long>(List.of(2L)));
         filmStorage.add(film);
@@ -153,7 +153,7 @@ class FilmServiceTest {
     @Test
     void deleteLikeTest() {
         User user = new User(1L, "email@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(2));
+                LocalDate.now().plusDays(2), new HashSet<>());
         Film film = new Film(1L, "1", "description1", LocalDate.now(), 1,
                 new HashSet<Long>(List.of(1L, 2L)));
         filmStorage.add(film);

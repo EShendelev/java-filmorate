@@ -22,7 +22,6 @@ public class FilmController {
     static final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
     static final int MAX_LEN = 200;
 
-    @Autowired
     public FilmController(FilmService filmService, FilmStorage filmStorage) {
         this.filmService = filmService;
         this.filmStorage = filmStorage;
@@ -43,6 +42,10 @@ public class FilmController {
 
     @GetMapping("popular?count={count}")
     public Collection<Film> getListOfPopularFilms(@RequestParam Integer count) {
+        if (count == null || count == 0 ) {
+            log.info("Показаны 10 популярных фильмов");
+        }
+        log.info("Показаны {} популярных фильмов", count);
         return filmService.findPopularFilms(count);
     }
 
@@ -50,7 +53,7 @@ public class FilmController {
     public Film addFilm(@RequestBody @Valid Film film) {
         if (validateFilm(film)) {
             Film crFilm = filmStorage.add(film);
-            log.info("film {} id {} added", film.getName(), film.getId());
+            log.info("Фильм {} id  {} добавлен", film.getName(), film.getId());
             return crFilm;
         }
         return film;
@@ -60,7 +63,7 @@ public class FilmController {
     public Film updateFilm(@RequestBody @Valid Film film) {
         if (validateFilm(film)) {
             Film upFilm = filmStorage.update(film);
-            log.info("film id {} updated", film.getId());
+            log.info("Фильм id {} обновлен", film.getId());
             return upFilm;
         }
         return film;

@@ -22,22 +22,4 @@ public class User {
     private String name;
     private LocalDate birthday;
     private Set<Long> friends; // Набор с ID друзей
-    private Set<Long> likedFilms = new HashSet<>(); //Набор ID фильмов, которые лайкнул пользователь
-
-    public User(Long id, String email, String login, String name, LocalDate birthday) {
-        this.id = id;
-        this.email = email;
-        this.login = login;
-        this.name = name;
-        this.birthday = birthday;
-    }
-
-    public User(Long id, String email, String login, String name, LocalDate birthday, Set<Long> friends) {
-        this.id = id;
-        this.email = email;
-        this.login = login;
-        this.name = name;
-        this.birthday = birthday;
-        this.friends = friends;
-    }
 }

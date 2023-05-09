@@ -10,8 +10,10 @@ import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -23,7 +25,7 @@ public class UserController {
     private final UserService userService;
     private final UserStorage userStorage;
 
-    @Autowired
+
     public UserController(UserService userService, UserStorage userStorage) {
         this.userService = userService;
         this.userStorage = userStorage;
@@ -35,10 +37,10 @@ public class UserController {
         return userStorage.findAll();
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     public User getUser(@PathVariable("id") Long id) {
         User user = userStorage.findById(id);
-        log.info("User id {} found", id);
+        log.info("Пользователь id {} найден", id);
         return user;
     }
 
@@ -47,7 +49,8 @@ public class UserController {
         User user = userStorage.findById(id);
         Collection<User> friendList = user.getFriends().stream()
                 .map(userStorage::findById)
-                .collect(Collectors.toCollection(HashSet::new));
+                .collect(Collectors.toCollection(ArrayList::new));
+        log.info("Получен список друзей для пользователя id {}", id);
 
         return friendList;
     }
@@ -55,10 +58,8 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public Collection<User> getCommonFriensList(@PathVariable Long id,
                                                 @PathVariable Long otherId) {
-        User user = userStorage.findById(id);
-        User otherUser = userStorage.findById(otherId);
-
         Collection<User> commonList = userService.getCommonFriends(id, otherId);
+        
         return commonList;
     }
 
@@ -66,7 +67,7 @@ public class UserController {
     public User createUser(@RequestBody @Valid User user) {
         if (validateUser(user)) {
             User crUser = userStorage.add(user);
-            log.info("create user: id {}", crUser.getId());
+            log.info("создан пользователь: id {}", crUser.getId());
             return crUser;
         }
         return user;
@@ -77,7 +78,7 @@ public class UserController {
     public User updateUser(@RequestBody @Valid User user) {
         if (validateUser(user)) {
             User upUser = userStorage.update(user);
-            log.info("User id " + upUser.getId() + " update");
+            log.info("Пользователь id " + upUser.getId() + " обновлён");
             return upUser;
         }
         return user;
@@ -87,6 +88,7 @@ public class UserController {
     public User addFriend(@PathVariable Long id,
                           @PathVariable Long friendId) {
         userService.addFriend(id, friendId);
+        log.info("Пользователь id {} добавлен в друзья пользователю id {}", friendId, id);
         return userStorage.findById(friendId); // возможно, это не нужно
     }
 

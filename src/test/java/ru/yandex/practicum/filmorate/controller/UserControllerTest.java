@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +28,7 @@ class UserControllerTest {
     @Test
     void validateUserWithWrongBirthdayTest() {
         User user = new User(1L, "email@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(2));
+                LocalDate.now().plusDays(2), new HashSet<>());
         assertThrows(UserValidateFailException.class, () -> {
             userController.validateUser(user);
         });

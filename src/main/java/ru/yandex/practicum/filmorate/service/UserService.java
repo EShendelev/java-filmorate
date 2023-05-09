@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.UserNotExistException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
@@ -20,10 +21,30 @@ public class UserService {
     }
 
     public void addFriend(Long userId, Long friendId) {
-        Set<Long> friendsIds = userStorage.findById(userId).getFriends();
-        Set<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
-        friendsIds.add(friendId);
-        friendsOfFriend.add(userId);
+        User user = userStorage.findById(userId);
+        User friend = userStorage.findById(friendId);
+
+        if (user == null) {
+            throw new UserNotExistException(String.format("пользователя с id %d не существует", userId));
+        }
+        if (friend == null) {
+            throw new UserNotExistException(String.format("пользователя с id %d не существует", friendId));
+        }
+
+        Set<Long> userFriendsIds = userStorage.findById(userId).getFriends();
+        Set<Long> friendFriendsIds = userStorage.findById(friendId).getFriends();
+
+        if (userFriendsIds == null) {
+            userFriendsIds = new HashSet<>();
+            userStorage.findById(userId).setFriends(userFriendsIds);
+        }
+        if (friendFriendsIds == null) {
+            friendFriendsIds = new HashSet<>();
+            userStorage.findById(friendId).setFriends(friendFriendsIds);
+        }
+
+        userFriendsIds.add(friendId);
+        friendFriendsIds.add(userId);
     }
 
     public void deleteFriend(Long userId, Long friendId) {
