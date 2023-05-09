@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserValidateFailException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -12,8 +11,6 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -33,7 +30,7 @@ public class UserController {
 
     @GetMapping
     public Collection<User> findAll() {
-        log.info("find all users");
+        log.info("Получен весь список пользователей");
         return userStorage.findAll();
     }
 
@@ -59,7 +56,7 @@ public class UserController {
     public Collection<User> getCommonFriensList(@PathVariable Long id,
                                                 @PathVariable Long otherId) {
         Collection<User> commonList = userService.getCommonFriends(id, otherId);
-        
+
         return commonList;
     }
 
@@ -89,13 +86,14 @@ public class UserController {
                           @PathVariable Long friendId) {
         userService.addFriend(id, friendId);
         log.info("Пользователь id {} добавлен в друзья пользователю id {}", friendId, id);
-        return userStorage.findById(friendId); // возможно, это не нужно
+        return userStorage.findById(friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public User deleteFriend(@PathVariable Long id,
                              @PathVariable Long friendId) {
         userService.deleteFriend(id, friendId);
+        log.info("Пользователь id {} удален из списка друзей пользователя id {}", friendId, id);
         return userStorage.findById(friendId);
     }
 

@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.utils.FilmIdProvider;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -38,9 +35,15 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        if (!films.containsKey(film.getId())) {
+        Long id = film.getId();
+        if (!films.containsKey(id)) {
             throw new FilmNotExistException(String.format("Фильм с  id %d не найден", film.getId()));
         }
+        Set<Long> filmLikes = films.get(id).getLikes();
+        if (filmLikes == null) {
+            film.setLikes(new HashSet<>());
+        }
+        film.setLikes(filmLikes);
         films.put(film.getId(), film);
         return film;
     }

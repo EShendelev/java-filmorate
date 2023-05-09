@@ -1,13 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmValidateFailException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
-
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -29,20 +27,20 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
-        log.info("find all films");
+        log.info("Получен весь список фильмов");
         return filmStorage.findAll();
     }
 
-    @GetMapping("/film/{id}")
+    @GetMapping("/{id}")
     public Film getFilm(@PathVariable("id") Long id) {
         Film findedFilm = filmStorage.findById(id);
-        log.info("film № {} found", id);
+        log.info("Фильм id {} найден", id);
         return findedFilm;
     }
 
-    @GetMapping("popular?count={count}")
-    public Collection<Film> getListOfPopularFilms(@RequestParam Integer count) {
-        if (count == null || count == 0 ) {
+    @GetMapping("/popular")
+    public Collection<Film> getListOfPopularFilms(@RequestParam(defaultValue = "0") Integer count) {
+        if (count == null || count == 0) {
             log.info("Показаны 10 популярных фильмов");
         }
         log.info("Показаны {} популярных фильмов", count);
@@ -70,16 +68,16 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film likeFilm(@PathVariable Long id,
-                         @PathVariable Long userId) {
+    public Film likeFilm(@PathVariable Long id, @PathVariable Long userId) {
         filmService.doLike(id, userId, true);
+        log.info("Фильм id {} получил лайк от пользователя id {}", id, userId);
         return filmStorage.findById(id);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLikeFilm(@PathVariable Long id,
-                         @PathVariable Long userId) {
+    public Film deleteLikeFilm(@PathVariable Long id, @PathVariable Long userId) {
         filmService.doLike(id, userId, false);
+        log.info("Пользователь id {} удалил свой лайк фильму id {}", userId, id);
         return filmStorage.findById(id);
     }
 
@@ -92,5 +90,4 @@ public class FilmController {
         }
         return true;
     }
-
 }
