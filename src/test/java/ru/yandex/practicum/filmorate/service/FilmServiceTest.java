@@ -4,9 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
-import ru.yandex.practicum.filmorate.storage.utils.Storages;
+import ru.yandex.practicum.filmorate.storage.utils.FilmIdProvider;
+import ru.yandex.practicum.filmorate.storage.utils.UserIdProvider;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -21,11 +24,10 @@ class FilmServiceTest {
     private FilmStorage filmStorage;
     private FilmService filmService;
 
-
     @BeforeEach
     void beforeEach() {
-        userStorage = Storages.getDefaultUserStorage();
-        filmStorage = Storages.getDefaultFilmStorage();
+        userStorage = new InMemoryUserStorage(new UserIdProvider());
+        filmStorage = new InMemoryFilmStorage(new FilmIdProvider());
         filmService = new FilmService(filmStorage);
     }
 
@@ -45,10 +47,10 @@ class FilmServiceTest {
         filmStorage.add(film3);
         filmStorage.add(film4);
 
-        Collection<Film> sortedFilm = filmService.findPopularFilms(4);
+        Collection<Film> sortedFilm = filmService.findPopularFilms(3);
         Long[] sortedId = sortedFilm.stream().map(Film::getId).toArray(Long[]::new);
-        assertEquals(4, sortedFilm.size());
-        assertArrayEquals(sortedId, new Long[]{4L, 3L, 2L, 1L});
+        assertEquals(3, sortedFilm.size());
+        assertArrayEquals(sortedId, new Long[]{4L, 3L, 2L});
     }
 
     @Test
@@ -90,12 +92,12 @@ class FilmServiceTest {
 
         Collection<Film> sortedFilm = filmService.findPopularFilms(0);
         Object[] sortedId = sortedFilm.stream().map(Film::getId).toArray();
-        assertEquals(10, sortedFilm.size());
-        assertArrayEquals(new Object[]{11L, 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L}, sortedId);
+        assertEquals(0, sortedFilm.size());
+        assertArrayEquals(new Object[]{}, sortedId);
     }
 
     @Test
-    void findPopularFilmsWithCountNullTest() {
+    void findPopularFilmsWithCountTenTest() {
         Film film1 = new Film(1L, "1", "description1", LocalDate.now(), 1,
                 new HashSet<Long>(List.of(1L)));
         Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1),
@@ -132,7 +134,7 @@ class FilmServiceTest {
         filmStorage.add(film11);
 
 
-        Collection<Film> sortedFilm = filmService.findPopularFilms(null);
+        Collection<Film> sortedFilm = filmService.findPopularFilms(10);
         Object[] sortedId = sortedFilm.stream().map(Film::getId).toArray();
         assertEquals(10, sortedFilm.size());
         assertArrayEquals(new Object[]{11L, 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L}, sortedId);

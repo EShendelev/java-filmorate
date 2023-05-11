@@ -19,7 +19,7 @@ class UserControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        userController = new UserController(userService, userStorage);
+        userController = new UserController(userService);
     }
 
     @Test

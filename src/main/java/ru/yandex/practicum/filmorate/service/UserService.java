@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -31,20 +31,8 @@ public class UserService {
             throw new UserNotExistException(String.format("пользователя с id %d не существует", friendId));
         }
 
-        Set<Long> userFriendsIds = userStorage.findById(userId).getFriends();
-        Set<Long> friendFriendsIds = userStorage.findById(friendId).getFriends();
-
-        if (userFriendsIds == null) {
-            userFriendsIds = new HashSet<>();
-            userStorage.findById(userId).setFriends(userFriendsIds);
-        }
-        if (friendFriendsIds == null) {
-            friendFriendsIds = new HashSet<>();
-            userStorage.findById(friendId).setFriends(friendFriendsIds);
-        }
-
-        userFriendsIds.add(friendId);
-        friendFriendsIds.add(userId);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
     }
 
     public void deleteFriend(Long userId, Long friendId) {
@@ -58,9 +46,6 @@ public class UserService {
         Set<Long> friendsIds = userStorage.findById(userId).getFriends();
         Set<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
         List<User> commonFriends = new ArrayList<>();
-        if (friendsIds == null) {
-            return new ArrayList<>();
-        }
 
         for (Long fr : friendsIds) {
             if (friendsOfFriend.contains(fr)) {
@@ -69,5 +54,25 @@ public class UserService {
         }
 
         return commonFriends;
+    }
+
+    public Collection<User> findAll() {
+        return userStorage.findAll();
+    }
+
+    public User findById(Long id) {
+        return userStorage.findById(id);
+    }
+
+    public User add(User user) {
+        return userStorage.add(user);
+    }
+
+    public User update(User user) {
+        return userStorage.update(user);
+    }
+
+    public Collection<User> getFriendsList(Collection<Long> idSet) {
+        return userStorage.getFriendList(idSet);
     }
 }

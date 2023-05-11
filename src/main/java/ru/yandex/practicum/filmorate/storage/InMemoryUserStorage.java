@@ -10,15 +10,15 @@ import ru.yandex.practicum.filmorate.storage.utils.UserIdProvider;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
     UserIdProvider idProvider;
-    private final Map<Long, User> users;
+    private final Map<Long, User> users = new HashMap<>();
 
-    public InMemoryUserStorage() {
-        idProvider = new UserIdProvider();
-        users = new HashMap<>();
+    public InMemoryUserStorage(UserIdProvider userIdProvider) {
+        this.idProvider = userIdProvider;
     }
 
     @Override
@@ -40,7 +40,8 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User update(User user) {
         if (!users.containsKey(user.getId())) {
-            throw new FilmNotExistException(String.format("Пользователь с  id %d не найден", user.getId()));
+            throw new FilmNotExistException(String.format("Ошибка обновления данных. " +
+                    "Пользователь с  id %d не найден", user.getId()));
         }
         users.put(user.getId(), user);
         return user;
@@ -48,14 +49,29 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User delete(Long id) {
-        return null;
+        if (!users.containsKey(id)) {
+            throw new UserNotExistException(String.format("Ошибка удаления. Пользователя id %d не существует", id));
+        }
+        User user = users.get(id);
+        users.remove(id);
+        return user;
     }
 
     @Override
     public User findById(Long id) throws UserNotExistException {
         if (!users.containsKey(id)) {
-            throw new UserNotExistException("Пользователь не найден");
+            throw new UserNotExistException(String.format("Ошибка поиска. Пользователь id %d не найден", id));
         }
         return users.get(id);
+    }
+
+    @Override
+    public Collection<User> getFriendList(Collection<Long> idSet) {
+        if (idSet == null) {
+            throw new UserNotExistException("Ошибка вывода списка друзей. Список друзей пуст");
+        }
+        return idSet.stream()
+                .map(this::findById)
+                .collect(Collectors.toList());
     }
 }

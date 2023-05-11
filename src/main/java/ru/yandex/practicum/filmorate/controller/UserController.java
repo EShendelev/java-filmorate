@@ -5,13 +5,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.UserValidateFailException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -20,61 +17,56 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
-    private final UserStorage userStorage;
 
 
-    public UserController(UserService userService, UserStorage userStorage) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.userStorage = userStorage;
+
     }
 
     @GetMapping
     public Collection<User> findAll() {
         log.info("Получен весь список пользователей");
-        return userStorage.findAll();
+        return userService.findAll();
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id") Long id) {
-        User user = userStorage.findById(id);
+        User user = userService.findById(id);
         log.info("Пользователь id {} найден", id);
         return user;
     }
 
     @GetMapping("/{id}/friends")
     public Collection<User> getFriendsList(@PathVariable("id") Long id) {
-        User user = userStorage.findById(id);
-        Collection<User> friendList = user.getFriends().stream()
-                .map(userStorage::findById)
-                .collect(Collectors.toCollection(ArrayList::new));
+        User user = userService.findById(id);
+        Collection<User> friendList = userService.getFriendsList(user.getFriends());
         log.info("Получен список друзей для пользователя id {}", id);
 
         return friendList;
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getCommonFriensList(@PathVariable Long id,
-                                                @PathVariable Long otherId) {
-        Collection<User> commonList = userService.getCommonFriends(id, otherId);
+    public Collection<User> getCommonFriendsList(@PathVariable Long id,
+                                                 @PathVariable Long otherId) {
 
-        return commonList;
+        return userService.getCommonFriends(id, otherId);
     }
 
     @PostMapping
     public User createUser(@RequestBody @Valid User user) {
         if (validateUser(user)) {
-            User crUser = userStorage.add(user);
+            User crUser = userService.add(user);
             log.info("создан пользователь: id {}", crUser.getId());
             return crUser;
         }
         return user;
     }
 
-
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {
         if (validateUser(user)) {
-            User upUser = userStorage.update(user);
+            User upUser = userService.update(user);
             log.info("Пользователь id " + upUser.getId() + " обновлён");
             return upUser;
         }
@@ -86,7 +78,7 @@ public class UserController {
                           @PathVariable Long friendId) {
         userService.addFriend(id, friendId);
         log.info("Пользователь id {} добавлен в друзья пользователю id {}", friendId, id);
-        return userStorage.findById(friendId);
+        return userService.findById(friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
@@ -94,7 +86,7 @@ public class UserController {
                              @PathVariable Long friendId) {
         userService.deleteFriend(id, friendId);
         log.info("Пользователь id {} удален из списка друзей пользователя id {}", friendId, id);
-        return userStorage.findById(friendId);
+        return userService.findById(friendId);
     }
 
     protected boolean validateUser(User user) {

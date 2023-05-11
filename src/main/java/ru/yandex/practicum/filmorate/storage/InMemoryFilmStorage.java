@@ -12,16 +12,10 @@ import java.util.*;
 public class InMemoryFilmStorage implements FilmStorage {
 
     FilmIdProvider idProvider;
-    protected final Map<Long, Film> films;
+    protected final Map<Long, Film> films = new HashMap<>();
 
-    public InMemoryFilmStorage() {
-        idProvider = new FilmIdProvider();
-        films = new HashMap<>();
-    }
-
-    @Override
-    public Map<Long, Film> getFilms() {
-        return films;
+    public InMemoryFilmStorage(FilmIdProvider idProvider) {
+        this.idProvider = idProvider;
     }
 
     @Override
@@ -39,7 +33,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film update(Film film) {
         Long id = film.getId();
         if (!films.containsKey(id)) {
-            throw new FilmNotExistException(String.format("Фильм с  id %d не найден", film.getId()));
+            throw new FilmNotExistException(String.format("Ошибка обновления данных. " +
+                    "Фильм с  id %d не найден", film.getId()));
         }
         Set<Long> filmLikes = films.get(id).getLikes();
         if (filmLikes == null) {
@@ -52,7 +47,12 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film delete(Long id) {
-        return null;
+        if (!films.containsKey(id)) {
+            throw new FilmNotExistException(String.format("Ошибка удаления. Фильма id %d не существует", id));
+        }
+        Film film = films.get(id);
+        films.remove(id);
+        return film;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film findById(Long id) {
         if (!films.containsKey(id)) {
-            throw new FilmNotExistException(String.format("Фильм id %d не найден", id));
+            throw new FilmNotExistException(String.format("Ошибка поиска. Фильм id %d не найден", id));
         }
         return films.get(id);
     }

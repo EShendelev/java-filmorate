@@ -3,8 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
-import ru.yandex.practicum.filmorate.storage.utils.Storages;
+import ru.yandex.practicum.filmorate.storage.utils.UserIdProvider;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -18,7 +19,7 @@ class UserServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        userStorage = Storages.getDefaultUserStorage();
+        userStorage = new InMemoryUserStorage(new UserIdProvider());
         userService = new UserService(userStorage);
     }
 
