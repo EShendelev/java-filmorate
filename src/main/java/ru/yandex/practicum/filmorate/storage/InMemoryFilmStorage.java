@@ -23,9 +23,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         Long id = idProvider.getIncrementId();
         film.setId(id);
         films.put(id, film);
-        if (film.getLikes() == null) {
-            film.setLikes(new HashSet<>());
-        }
         return film;
     }
 
@@ -36,11 +33,6 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FilmNotExistException(String.format("Ошибка обновления данных. " +
                     "Фильм с  id %d не найден", film.getId()));
         }
-        Set<Long> filmLikes = films.get(id).getLikes();
-        if (filmLikes == null) {
-            film.setLikes(new HashSet<>());
-        }
-        film.setLikes(filmLikes);
         films.put(film.getId(), film);
         return film;
     }

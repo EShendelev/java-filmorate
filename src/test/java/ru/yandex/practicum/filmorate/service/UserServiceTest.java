@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.storage.utils.UserIdProvider;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,9 +25,9 @@ class UserServiceTest {
     @Test
     void addFriendTest() {
         User user1 = new User(1L, "email@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(2), new HashSet<>());
+                LocalDate.now().plusDays(2));
         User user2 = new User(2L, "email1@emal.ru", "Login1", "Name",
-                LocalDate.now().plusDays(4), new HashSet<>());
+                LocalDate.now().plusDays(4));
 
         userStorage.add(user1);
         userStorage.add(user2);
@@ -43,13 +42,17 @@ class UserServiceTest {
     @Test
     void deleteFriendTest() {
         User user1 = new User(1L, "email@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(2), new HashSet<>(List.of(2L, 4L)));
+                LocalDate.now().plusDays(2));
         User user2 = new User(2L, "email1@emal.ru", "Login1", "Name",
-                LocalDate.now().plusDays(4), new HashSet<>(List.of(1L, 3L, 4L)));
+                LocalDate.now().plusDays(4));
         User user3 = new User(3L, "email2@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(6), new HashSet<>(List.of(2L, 4L)));
+                LocalDate.now().plusDays(6));
         User user4 = new User(4L, "email3@emal.ru", "Login1", "Name",
-                LocalDate.now().plusDays(8), new HashSet<>(List.of(1L, 3L, 2L)));
+                LocalDate.now().plusDays(8));
+        user1.getFriends().addAll(List.of(2L, 4L));
+        user2.getFriends().addAll(List.of(1L, 3L, 4L));
+        user3.getFriends().addAll(List.of(2L, 4L));
+        user4.getFriends().addAll(List.of(1L, 3L, 2L));
 
         userStorage.add(user1);
         userStorage.add(user2);
@@ -65,13 +68,17 @@ class UserServiceTest {
     @Test
     void getCommonFriendsTest() {
         User user1 = new User(1L, "email@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(2), new HashSet<>(List.of(2L, 4L)));
+                LocalDate.now().plusDays(2));
         User user2 = new User(2L, "email1@emal.ru", "Login1", "Name",
-                LocalDate.now().plusDays(4), new HashSet<>(List.of(1L, 3L, 4L)));
+                LocalDate.now().plusDays(4));
         User user3 = new User(3L, "email2@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(6), new HashSet<>(List.of(2L, 4L)));
+                LocalDate.now().plusDays(6));
         User user4 = new User(4L, "email3@emal.ru", "Login1", "Name",
-                LocalDate.now().plusDays(8), new HashSet<>(List.of(1L, 3L, 2L)));
+                LocalDate.now().plusDays(8));
+        user1.getFriends().addAll(List.of(2L, 4L));
+        user2.getFriends().addAll(List.of(1L, 3L, 4L));
+        user3.getFriends().addAll(List.of(2L, 4L));
+        user4.getFriends().addAll(List.of(1L, 3L, 2L));
 
         userStorage.add(user1);
         userStorage.add(user2);

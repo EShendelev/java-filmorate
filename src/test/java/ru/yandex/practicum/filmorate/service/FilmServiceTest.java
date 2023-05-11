@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.utils.UserIdProvider;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -33,14 +32,15 @@ class FilmServiceTest {
 
     @Test
     void findPopularFilmsTest() {
-        Film film1 = new Film(1L, "1", "description1", LocalDate.now(), 1,
-                new HashSet<Long>(List.of(1L, 2L)));
-        Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L)));
-        Film film3 = new Film(3L, "3", "description3", LocalDate.now().plusDays(2),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L)));
-        Film film4 = new Film(4L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L)));
+        Film film1 = new Film(1L, "1", "description1", LocalDate.now(), 1);
+        Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1), 1);
+        Film film3 = new Film(3L, "3", "description3", LocalDate.now().plusDays(2), 1);
+        Film film4 = new Film(4L, "4", "description4", LocalDate.now().plusDays(3), 1);
+
+        film1.getLikes().add(1L);
+        film2.getLikes().addAll(List.of(1L, 2L));
+        film3.getLikes().addAll(List.of(1L, 2L, 3L));
+        film4.getLikes().addAll(List.of(1L, 2L, 3L, 4L));
 
         filmStorage.add(film1);
         filmStorage.add(film2);
@@ -55,28 +55,28 @@ class FilmServiceTest {
 
     @Test
     void findPopularFilmsWithCountZeroTest() {
-        Film film1 = new Film(1L, "1", "description1", LocalDate.now(), 1,
-                new HashSet<Long>(List.of(1L)));
-        Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1),
-                1, new HashSet<Long>(List.of(1L, 2L)));
-        Film film3 = new Film(3L, "3", "description3", LocalDate.now().plusDays(2),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L)));
-        Film film4 = new Film(4L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L)));
-        Film film5 = new Film(5L, "1", "description1", LocalDate.now(), 1,
-                new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L)));
-        Film film6 = new Film(6L, "2", "description2", LocalDate.now().plusDays(1),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L)));
-        Film film7 = new Film(7L, "3", "description3", LocalDate.now().plusDays(2),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L)));
-        Film film8 = new Film(8L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L)));
-        Film film9 = new Film(9L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L)));
-        Film film10 = new Film(10L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L)));
-        Film film11 = new Film(11L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L)));
+        Film film1 = new Film(1L, "1", "description1", LocalDate.now(), 1);
+        Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1), 1);
+        Film film3 = new Film(3L, "3", "description3", LocalDate.now().plusDays(2), 1);
+        Film film4 = new Film(4L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film5 = new Film(5L, "1", "description1", LocalDate.now(), 1);
+        Film film6 = new Film(6L, "2", "description2", LocalDate.now().plusDays(1), 1);
+        Film film7 = new Film(7L, "3", "description3", LocalDate.now().plusDays(2), 1);
+        Film film8 = new Film(8L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film9 = new Film(9L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film10 = new Film(10L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film11 = new Film(11L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        film1.getLikes().add(1L);
+        film2.getLikes().addAll(List.of(1L, 2L));
+        film3.getLikes().addAll(List.of(1L, 2L, 3L));
+        film4.getLikes().addAll(List.of(1L, 2L, 3L, 4L));
+        film5.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L));
+        film6.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L));
+        film7.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L));
+        film8.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L));
+        film9.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L));
+        film10.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L));
+        film11.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L));
 
         filmStorage.add(film1);
         filmStorage.add(film2);
@@ -98,28 +98,28 @@ class FilmServiceTest {
 
     @Test
     void findPopularFilmsWithCountTenTest() {
-        Film film1 = new Film(1L, "1", "description1", LocalDate.now(), 1,
-                new HashSet<Long>(List.of(1L)));
-        Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1),
-                1, new HashSet<Long>(List.of(1L, 2L)));
-        Film film3 = new Film(3L, "3", "description3", LocalDate.now().plusDays(2),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L)));
-        Film film4 = new Film(4L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L)));
-        Film film5 = new Film(5L, "1", "description1", LocalDate.now(), 1,
-                new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L)));
-        Film film6 = new Film(6L, "2", "description2", LocalDate.now().plusDays(1),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L)));
-        Film film7 = new Film(7L, "3", "description3", LocalDate.now().plusDays(2),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L)));
-        Film film8 = new Film(8L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L)));
-        Film film9 = new Film(9L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L)));
-        Film film10 = new Film(10L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L)));
-        Film film11 = new Film(11L, "4", "description4", LocalDate.now().plusDays(3),
-                1, new HashSet<Long>(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L)));
+        Film film1 = new Film(1L, "1", "description1", LocalDate.now(), 1);
+        Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1), 1);
+        Film film3 = new Film(3L, "3", "description3", LocalDate.now().plusDays(2), 1);
+        Film film4 = new Film(4L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film5 = new Film(5L, "1", "description1", LocalDate.now(), 1);
+        Film film6 = new Film(6L, "2", "description2", LocalDate.now().plusDays(1), 1);
+        Film film7 = new Film(7L, "3", "description3", LocalDate.now().plusDays(2), 1);
+        Film film8 = new Film(8L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film9 = new Film(9L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film10 = new Film(10L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film11 = new Film(11L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        film1.getLikes().add(1L);
+        film2.getLikes().addAll(List.of(1L, 2L));
+        film3.getLikes().addAll(List.of(1L, 2L, 3L));
+        film4.getLikes().addAll(List.of(1L, 2L, 3L, 4L));
+        film5.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L));
+        film6.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L));
+        film7.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L));
+        film8.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L));
+        film9.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L));
+        film10.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L));
+        film11.getLikes().addAll(List.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L));
 
         filmStorage.add(film1);
         filmStorage.add(film2);
@@ -133,7 +133,6 @@ class FilmServiceTest {
         filmStorage.add(film10);
         filmStorage.add(film11);
 
-
         Collection<Film> sortedFilm = filmService.findPopularFilms(10);
         Object[] sortedId = sortedFilm.stream().map(Film::getId).toArray();
         assertEquals(10, sortedFilm.size());
@@ -143,9 +142,10 @@ class FilmServiceTest {
     @Test
     void addLikeTest() {
         User user = new User(1L, "email@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(2), new HashSet<>());
-        Film film = new Film(1L, "1", "description1", LocalDate.now(), 1,
-                new HashSet<Long>(List.of(2L)));
+                LocalDate.now().plusDays(2));
+        Film film = new Film(1L, "1", "description1", LocalDate.now(), 1);
+
+        film.getLikes().add(2L);
         filmStorage.add(film);
         userStorage.add(user);
         filmService.doLike(1L, 1L, true);
@@ -155,9 +155,10 @@ class FilmServiceTest {
     @Test
     void deleteLikeTest() {
         User user = new User(1L, "email@emal.ru", "Login", "Name",
-                LocalDate.now().plusDays(2), new HashSet<>());
-        Film film = new Film(1L, "1", "description1", LocalDate.now(), 1,
-                new HashSet<Long>(List.of(1L, 2L)));
+                LocalDate.now().plusDays(2));
+        Film film = new Film(1L, "1", "description1", LocalDate.now(), 1);
+
+        film.getLikes().addAll(List.of(1L, 2L));
         filmStorage.add(film);
         userStorage.add(user);
         filmService.doLike(1L, 1L, false);
