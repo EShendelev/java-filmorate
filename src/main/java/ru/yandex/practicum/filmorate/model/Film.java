@@ -20,6 +20,8 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
     private final Set<Long> likes = new HashSet<>();
+    private String genre;
+    private String mpaRating;
 
     public Integer getLikesCount() {
         return likes.size();
