@@ -32,10 +32,10 @@ class FilmServiceTest {
 
     @Test
     void findPopularFilmsTest() {
-        Film film1 = new Film(1L, "1", "description1", LocalDate.now(), 1);
-        Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1), 1);
-        Film film3 = new Film(3L, "3", "description3", LocalDate.now().plusDays(2), 1);
-        Film film4 = new Film(4L, "4", "description4", LocalDate.now().plusDays(3), 1);
+        Film film1 = new Film(1L, "1", "description1", LocalDate.now(),1,  1, "R");
+        Film film2 = new Film(2L, "2", "description2", LocalDate.now().plusDays(1), 1,  1, "R");
+        Film film3 = new Film(3L, "3", "description3", LocalDate.now().plusDays(2), 1,  1, "R");
+        Film film4 = new Film(4L, "4", "description4", LocalDate.now().plusDays(3), 1,  1, "R");
 
         film1.getLikes().add(1L);
         film2.getLikes().addAll(List.of(1L, 2L));

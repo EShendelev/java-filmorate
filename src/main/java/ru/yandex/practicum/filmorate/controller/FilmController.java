@@ -18,7 +18,7 @@ public class FilmController {
     static final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
     static final int MAX_LEN = 200;
 
-    public Fроцесс (javaw.exilmController(FilmService filmService) {
+    public  FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
 
@@ -76,9 +76,6 @@ public class FilmController {
     }
 
     boolean validateFilm(Film film) {
-        if (film.getDescription().length() > MAX_LEN) {
-            throw new FilmValidateFailException("Максимальная длина описания - 200 символов.");
-        }
         if (film.getReleaseDate().isBefore(MIN_DATE)) {
             throw new FilmValidateFailException("Дата релиза не может быть ранее 28.12.1985 г.");
         }

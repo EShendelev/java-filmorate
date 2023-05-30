@@ -54,22 +54,16 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody @Valid User user) {
-        if (validateUser(user)) {
             User crUser = userService.add(user);
             log.info("создан пользователь: id {}", crUser.getId());
             return crUser;
-        }
-        return user;
     }
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {
-        if (validateUser(user)) {
             User upUser = userService.update(user);
             log.info("Пользователь id " + upUser.getId() + " обновлён");
             return upUser;
-        }
-        return user;
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -88,10 +82,4 @@ public class UserController {
         return userService.findById(friendId);
     }
 
-    protected boolean validateUser(User user) {
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new UserValidateFailException("Дата рождения не может быть в будущем");
-        }
-        return true;
-    }
 }

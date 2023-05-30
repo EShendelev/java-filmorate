@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS film_genre (
 	CONSTRAINT film_genre_pk PRIMARY KEY (film_id, genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS film_likes (
+CREATE TABLE IF NOT EXISTS likes (
 	film_id BIGINT REFERENCES films (id),
 	user_id BIGINT REFERENCES users (id),
 	CONSTRAINT likePK PRIMARY KEY(film_id, user_id)
