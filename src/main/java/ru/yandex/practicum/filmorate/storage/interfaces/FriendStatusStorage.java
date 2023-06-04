@@ -6,5 +6,5 @@ import java.util.Collection;
 
 public interface FriendStatusStorage {
     Collection<FriendStatus> getFriendStatus();
-    FriendStatus getStatusById(int mpaId);
+    FriendStatus getStatusById(String statusCode);
 }

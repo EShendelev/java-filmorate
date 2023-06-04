@@ -1,5 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.interfaces;
 
+import lombok.Builder;
+import lombok.Data;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 public interface FriendStorage {
