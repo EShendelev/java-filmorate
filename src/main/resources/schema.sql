@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS friends (
 	friend_id BIGINT REFERENCES users (id),
 	status_code CHAR(1) REFERENCES  status_code (code),
 	specified_date_time TIMESTAMP,
-	sicifier_id BIGINT NOT NULL,
+	sicifier_id BIGINT,
 	CONSTRAINT friendsPK PRIMARY KEY (user_id, friend_id)
 );
 

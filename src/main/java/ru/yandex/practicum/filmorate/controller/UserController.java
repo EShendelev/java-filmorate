@@ -1,27 +1,22 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.UserValidateFailException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
 
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
-
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     public Collection<User> findAll() {
@@ -54,10 +49,9 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody @Valid User user) {
-            User crUser = userService.add(user);
-            log.info("создан пользователь: id {}", crUser.getId());
-            return crUser;
-    }
+        //   log.info("создан пользователь: id {}", crUser.getId());
+            return userService.add(user);
+    }                                          
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {

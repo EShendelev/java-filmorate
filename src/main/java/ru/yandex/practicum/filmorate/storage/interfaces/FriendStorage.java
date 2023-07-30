@@ -1,10 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.interfaces;
 
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import java.util.Set;
 
 public interface FriendStorage {
     boolean addAsFriend(long userId, long friendId);

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotExistException;
@@ -12,13 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    UserStorage userStorage;
-
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    private final UserStorage userStorage;
 
     public void addFriend(Long userId, Long friendId) {
         User user = userStorage.findById(userId);
@@ -36,15 +33,15 @@ public class UserService {
     }
 
     public void deleteFriend(Long userId, Long friendId) {
-        Set<Long> friendsIds = userStorage.findById(userId).getFriends();
-        Set<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
+        List<Long> friendsIds = userStorage.findById(userId).getFriends();
+        List<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
         friendsIds.remove(friendId);
         friendsOfFriend.remove(userId);
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
-        Set<Long> friendsIds = userStorage.findById(userId).getFriends();
-        Set<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
+        List<Long> friendsIds = userStorage.findById(userId).getFriends();
+        List<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
         List<User> commonFriends = new ArrayList<>();
 
         for (Long fr : friendsIds) {

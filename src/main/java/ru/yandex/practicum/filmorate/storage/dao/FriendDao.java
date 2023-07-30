@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.storage.interfaces.FriendStorage;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
