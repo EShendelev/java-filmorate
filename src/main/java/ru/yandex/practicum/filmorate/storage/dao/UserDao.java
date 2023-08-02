@@ -28,7 +28,8 @@ public class UserDao implements UserStorage {
 
     @Override
     public Collection<User> findAll() {
-        return null;
+        String sqlQuery = "SELECT * FROM users";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
     }
 
     @Override
@@ -42,7 +43,14 @@ public class UserDao implements UserStorage {
 
     @Override
     public User update(User user) {
-        return null;
+        String sqlQuery = "UPDATE users SET email = ?, name = ?, birthday = ? WHERE id = ?";
+        jdbcTemplate.update(sqlQuery,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                user.getBirthday(),
+                user.getId());
+        return findById(user.getId());
     }
 
     @Override
@@ -59,10 +67,6 @@ public class UserDao implements UserStorage {
         } catch (DataAccessException e) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
         }
-        return null;
-    }
-    @Override
-    public Collection<User> getFriendList(Collection<Long> idSet) {
         return null;
     }
 

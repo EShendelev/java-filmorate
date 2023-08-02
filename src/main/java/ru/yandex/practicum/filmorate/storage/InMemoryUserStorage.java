@@ -66,7 +66,6 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(id);
     }
 
-    @Override
     public Collection<User> getFriendList(Collection<Long> idSet) {
         if (idSet.isEmpty()) {
             throw new UserNotExistException("Ошибка вывода списка друзей. Список друзей пуст");

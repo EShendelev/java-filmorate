@@ -31,14 +31,14 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("/{id}/friends")
-    public Collection<User> getFriendsList(@PathVariable("id") Long id) {
-        User user = userService.findById(id);
-        Collection<User> friendList = userService.getFriendsList(user.getFriends());
-        log.info("Получен список друзей для пользователя id {}", id);
-
-        return friendList;
-    }
+//    @GetMapping("/{id}/friends")
+//    public Collection<User> getFriendsList(@PathVariable("id") Long id) {
+//        User user = userService.findById(id);
+//        Collection<User> friendList = userService.getFriendsList(user.getFriends());
+//        log.info("Получен список друзей для пользователя id {}", id);
+//
+//        return friendList;
+//    }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public Collection<User> getCommonFriendsList(@PathVariable Long id,
@@ -55,9 +55,8 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {
-            User upUser = userService.update(user);
-            log.info("Пользователь id " + upUser.getId() + " обновлён");
-            return upUser;
+        // log.info("Пользователь id " + upUser.getId() + " обновлён");
+            return userService.update(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")

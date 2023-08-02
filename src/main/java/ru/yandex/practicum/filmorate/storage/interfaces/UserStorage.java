@@ -14,6 +14,4 @@ public interface UserStorage {
     User delete(Long id);
 
     User findById(Long id);
-
-    Collection<User> getFriendList(Collection<Long> idSet);
 }

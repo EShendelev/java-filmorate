@@ -69,7 +69,7 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    public Collection<User> getFriendsList(Collection<Long> idSet) {
-        return userStorage.getFriendList(idSet);
-    }
+//    public Collection<User> getFriendsList(Collection<Long> idSet) {
+//        return userStorage.getFriendList(idSet);
+//    }
 }

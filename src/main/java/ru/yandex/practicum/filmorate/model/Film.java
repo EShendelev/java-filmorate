@@ -6,7 +6,6 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,9 +24,9 @@ public class Film {
     private int duration;
     private int rate;
     @NotNull(message = "MPA не может быть пустым")
-    private String mpaRating;
-    private final Set<Long> likes = new HashSet<>();
-    private final List<Genre> genres;
+    private MpaRating mpaRating;
+    private List<Long> likes;
+    private List<Genre> genres;
 
     public Integer getLikesCount() {
         return likes.size();
