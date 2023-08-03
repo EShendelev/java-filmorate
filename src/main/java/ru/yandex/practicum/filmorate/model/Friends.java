@@ -7,10 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class Friend {
+public class Friends {
     private Long userId;
     private Long friendId;
-    private Character statusCode;
-    private LocalDateTime specifiedDateTime;
-    private Long specifierId;
 }

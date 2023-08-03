@@ -1,35 +1,27 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserNotExistException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.interfaces.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
+    private final FriendStorage friendStorage;
 
     public void addFriend(Long userId, Long friendId) {
         User user = userStorage.findById(userId);
         User friend = userStorage.findById(friendId);
 
-        if (user == null) {
-            throw new UserNotExistException(String.format("пользователя с id %d не существует", userId));
-        }
-        if (friend == null) {
-            throw new UserNotExistException(String.format("пользователя с id %d не существует", friendId));
-        }
+        boolean addition = friendStorage.addFriend(userId, friendId);
 
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
     }
 
     public void deleteFriend(Long userId, Long friendId) {

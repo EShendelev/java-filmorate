@@ -12,9 +12,3 @@ MERGE INTO genres (id, name)
            (4, 'Фантастика'),
            (5, 'Триллер'),
            (6, 'Боевик');
-           
-MERGE INTO status_code (code, name)
-	VALUES ('R', 'Requested'),
-			('A', 'Accepted'),
-			('D', 'Declined'),
-			('B', 'Blocked');

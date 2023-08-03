@@ -9,17 +9,9 @@ CREATE TABLE IF NOT EXISTS users (
 	CONSTRAINT no_spaces_in_login CHECK (login NOT IN (' '))
 );
 
-CREATE TABLE IF NOT EXISTS status_code (
-	code CHAR(1) NOT NULL PRIMARY KEY,
-	name VARCHAR(15)
-);
-
 CREATE TABLE IF NOT EXISTS friends (
 	user_id BIGINT REFERENCES users (id),
 	friend_id BIGINT REFERENCES users (id),
-	status_code CHAR(1) REFERENCES  status_code (code),
-	specified_date_time TIMESTAMP,
-	sicifier_id BIGINT,
 	CONSTRAINT friendsPK PRIMARY KEY (user_id, friend_id)
 );
 
