@@ -43,7 +43,7 @@ public class UserDao implements UserStorage {
 
     @Override
     public User update(User user) {
-        String sqlQuery = "UPDATE users SET email = ?, name = ?, birthday = ? WHERE id = ?";
+        String sqlQuery = "UPDATE users SET email = ?,login = ? , name = ?, birthday = ? WHERE id = ?";
         jdbcTemplate.update(sqlQuery,
                 user.getEmail(),
                 user.getLogin(),

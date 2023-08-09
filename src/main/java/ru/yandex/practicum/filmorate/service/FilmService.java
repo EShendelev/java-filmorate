@@ -6,8 +6,10 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     FilmStorage filmStorage;
+    LikeStorage likeStorage;
 
     @Autowired
     FilmService(FilmStorage filmStorage) {
@@ -26,7 +29,7 @@ public class FilmService {
     public Film doLike(Long filmId, Long userId, boolean like) {
         Film film = filmStorage.findById(filmId);
 
-        Set<Long> rate = film.getLikes();
+        List<Long> rate = film.getLikes();
         if (userId <= 0) {
             throw new UserNotExistException(String.format("Пользователь с id %d не существует", userId));
         }
@@ -62,5 +65,10 @@ public class FilmService {
 
     public Collection<Film> findAll() {
         return filmStorage.findAll();
+    }
+
+    public List<Long> getListOfLikes(long id) {
+        filmStorage.findById(id);
+        return likeStorage.getListOfLikes(id);
     }
 }

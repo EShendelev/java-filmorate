@@ -40,7 +40,7 @@ public class FriendsDao implements FriendStorage {
     }
 
     @Override
-    public List<Long> getAListOfMutualFriends(long userId, long otherId) {
+    public List<Long> getListOfMutualFriends(long userId, long otherId) {
         String sqlQuery = "SELECT friend_id " +
                 "FROM (SELECT * FROM friends WHERE user_id = ? OR user_id = ?) " +
                 "GROUP BY friend_id HAVING (COUNT(*) > 1";

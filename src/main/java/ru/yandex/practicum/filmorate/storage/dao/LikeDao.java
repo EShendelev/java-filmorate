@@ -33,7 +33,7 @@ public class LikeDao implements LikeStorage {
     }
 
     @Override
-    public List<Long> getListOfUserLikes(long filmId) {
+    public List<Long> getListOfLikes(long filmId) {
         String sqlQuery = "SELECT user_id FROM likes WHERE film_id = ?";
         return jdbcTemplate.queryForList(sqlQuery, Long.class, filmId);
     }

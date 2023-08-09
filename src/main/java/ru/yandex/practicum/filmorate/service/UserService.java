@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,6 @@ public class UserService {
         User friend = userStorage.findById(friendId);
 
         boolean addition = friendStorage.addFriend(userId, friendId);
-
     }
 
     public void deleteFriend(Long userId, Long friendId) {
@@ -61,7 +61,16 @@ public class UserService {
         return userStorage.update(user);
     }
 
-//    public Collection<User> getFriendsList(Collection<Long> idSet) {
-//        return userStorage.getFriendList(idSet);
-//    }
+    public List<User> getListOfFriends(long id) {
+        userStorage.findById(id);
+        return friendStorage.getListOfFriends(id).stream().map(userStorage::findById).collect(Collectors.toList());
+    }
+
+    public List<User> getListOfAMutualFriends(long id, long otherId) {
+        userStorage.findById(id);
+        userStorage.findById(otherId);
+        return friendStorage.getListOfMutualFriends(id, otherId).stream()
+                .map(userStorage::findById).collect(Collectors.toList());
+    }
+
 }

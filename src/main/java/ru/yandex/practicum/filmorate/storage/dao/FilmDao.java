@@ -99,7 +99,7 @@ public class FilmDao implements FilmStorage {
                 .duration(resultSet.getInt("duration"))
                 .rate(resultSet.getInt("rate"))
                 .mpaRating(mpaService.getMpaRatingById(resultSet.getInt("mpa_id")))
-                .likes(likeStorage.getListOfUserLikes(resultSet.getLong("film_id")))
+                .likes(likeStorage.getListOfLikes(resultSet.getLong("film_id")))
                 .genres(genreService.getListOfGenres(resultSet.getLong("film_id")))
                 .build();
     }
