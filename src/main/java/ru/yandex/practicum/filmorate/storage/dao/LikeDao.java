@@ -16,7 +16,7 @@ import java.util.Map;
 public class LikeDao implements LikeStorage {
     private final JdbcTemplate jdbcTemplate;
     @Override
-    public boolean addLike(long filmId, long userId) {
+    public boolean add(long filmId, long userId) {
         Like like = Like.builder()
                 .filmId(filmId)
                 .userId(userId)
@@ -33,7 +33,7 @@ public class LikeDao implements LikeStorage {
     }
 
     @Override
-    public List<Long> getListOfLikes(long filmId) {
+    public List<Long> getLikesList(long filmId) {
         String sqlQuery = "SELECT user_id FROM likes WHERE film_id = ?";
         return jdbcTemplate.queryForList(sqlQuery, Long.class, filmId);
     }

@@ -67,7 +67,7 @@ public class UserDao implements UserStorage {
         } catch (DataAccessException e) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
         }
-        return null;
+        return user;
     }
 
     private Map<String, Object> toMap(User user) {

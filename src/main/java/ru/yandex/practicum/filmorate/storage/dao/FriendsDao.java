@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Friends;
 import ru.yandex.practicum.filmorate.storage.interfaces.FriendStorage;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class FriendsDao implements FriendStorage {
     private final JdbcTemplate jdbcTemplate;
@@ -43,8 +44,9 @@ public class FriendsDao implements FriendStorage {
     public List<Long> getListOfMutualFriends(long userId, long otherId) {
         String sqlQuery = "SELECT friend_id " +
                 "FROM (SELECT * FROM friends WHERE user_id = ? OR user_id = ?) " +
-                "GROUP BY friend_id HAVING (COUNT(*) > 1";
-        return jdbcTemplate.queryForList(sqlQuery, Long.class, userId, otherId);
+                "GROUP BY friend_id HAVING (COUNT(*) > 1)";
+        List<Long> result = jdbcTemplate.queryForList(sqlQuery, Long.class, userId, otherId);
+        return result;
     }
 
     private Map<String, Object> toMap(Friends friends) {

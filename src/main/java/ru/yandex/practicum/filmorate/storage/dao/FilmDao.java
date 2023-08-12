@@ -6,10 +6,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmGenreStorage;
@@ -22,7 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Repository
+@Component
 @Primary
 @RequiredArgsConstructor
 @Slf4j
@@ -99,8 +98,8 @@ public class FilmDao implements FilmStorage {
                 .duration(resultSet.getInt("duration"))
                 .rate(resultSet.getInt("rate"))
                 .mpaRating(mpaService.getMpaRatingById(resultSet.getInt("mpa_id")))
-                .likes(likeStorage.getListOfLikes(resultSet.getLong("film_id")))
-                .genres(genreService.getListOfGenres(resultSet.getLong("film_id")))
+                .likes(likeStorage.getLikesList(resultSet.getLong("id")))
+                .genres(genreService.getListOfGenres(resultSet.getLong("id")))
                 .build();
     }
 
