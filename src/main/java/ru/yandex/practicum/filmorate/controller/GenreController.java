@@ -20,6 +20,7 @@ public class GenreController {
 
     private final String URI = "/genres";
     private final String NO_BODY = "no body";
+
     @GetMapping
     public Collection<Genre> getGenres() {
         Logger.logRequest(HttpMethod.GET, URI, NO_BODY);

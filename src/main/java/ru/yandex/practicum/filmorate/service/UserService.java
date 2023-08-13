@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.UserStorage;
@@ -25,10 +26,14 @@ public class UserService {
     }
 
     public void deleteFriend(Long userId, Long friendId) {
-        List<Long> friendsIds = userStorage.findById(userId).getFriends();
-        List<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
-        friendsIds.remove(friendId);
-        friendsOfFriend.remove(userId);
+        userStorage.findById(userId);
+        userStorage.findById(friendId);
+        boolean removal = friendStorage.removeFromFriends(userId, friendId);
+
+        if (!removal) {
+            throw new ObjectNotFoundException(String.format("Пользователь с id %d не в списке друзей" +
+                    " у пользователя с id %s", friendId, userId));
+        }
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
@@ -54,6 +59,9 @@ public class UserService {
     }
 
     public User add(User user) {
+        if (user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.add(user);
     }
 

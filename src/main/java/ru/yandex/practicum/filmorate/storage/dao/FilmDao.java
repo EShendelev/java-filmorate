@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmGenreStorage;
@@ -49,6 +50,7 @@ public class FilmDao implements FilmStorage {
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             filmGenreStorage.addGenres(film.getGenres(), filmId);
         }
+        Film result = findById(filmId);
         return findById(filmId);
     }
 
@@ -66,8 +68,19 @@ public class FilmDao implements FilmStorage {
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getRate(),
-                film.getMpaRating().getId(),
+                film.getMpa().getId(),
                 id);
+
+        Film filmBefore = findById(id);
+
+        Collection<Genre> genreListBefore = filmBefore.getGenres();
+        if (genreListBefore != null && !genreListBefore.isEmpty()) {
+            filmGenreStorage.deleteGenres(id);
+        }
+
+        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+            filmGenreStorage.addGenres(film.getGenres(), id);
+        }
 
         return findById(id);
     }
@@ -97,7 +110,7 @@ public class FilmDao implements FilmStorage {
                 .releaseDate(resultSet.getDate("release_date").toLocalDate())
                 .duration(resultSet.getInt("duration"))
                 .rate(resultSet.getInt("rate"))
-                .mpaRating(mpaService.getMpaRatingById(resultSet.getInt("mpa_id")))
+                .mpa(mpaService.getMpaRatingById(resultSet.getInt("mpa_id")))
                 .likes(likeStorage.getLikesList(resultSet.getLong("id")))
                 .genres(genreService.getListOfGenres(resultSet.getLong("id")))
                 .build();
@@ -110,7 +123,10 @@ public class FilmDao implements FilmStorage {
         values.put("release_date", film.getReleaseDate());
         values.put("duration", film.getDuration());
         values.put("rate", film.getRate());
-        values.put("mpa_id", film.getMpaRating().getId());
+        if (film.getMpa() == null) {
+            film.setMpa(mpaService.getMpaRatingById(1));
+        }
+        values.put("mpa_id", film.getMpa().getId());
         return values;
     }
 

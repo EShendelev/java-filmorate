@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MpaRating;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.*;
 
@@ -260,10 +260,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -278,10 +278,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -291,10 +291,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона 2")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -309,10 +309,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона 2")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -334,10 +334,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -345,10 +345,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона 2")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -366,10 +366,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -396,16 +396,16 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
         User addUser = userStorage.add(user);
         Film addFilm = filmStorage.add(film);
-        likeStorage.add(1L, 1L);
+        likeStorage.addLike(1L, 1L);
         assertThat(String.format("%s не поставил лайк фильму \"%s\"", addUser.getName(), addFilm.getName()),
                 filmStorage.findById(1L).getLikes(), hasItem(1L));
     }
@@ -423,16 +423,16 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
         User addUser = userStorage.add(user);
         Film addFilm = filmStorage.add(film);
-        likeStorage.add(1L, 1L);
+        likeStorage.addLike(1L, 1L);
         likeStorage.unlike(1L, 1L);
         assertThat("Список лайков не пуст",
                 filmStorage.findById(1L).getLikes(), empty());
@@ -451,16 +451,16 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
         User addUser = userStorage.add(user);
         Film addFilm = filmStorage.add(film);
-        likeStorage.add(1L, 1L);
+        likeStorage.addLike(1L, 1L);
         assertThat("Список лайков не содержит пользователя с id 1L", likeStorage.getLikesList(1L),
                 contains(1L));
     }
@@ -478,10 +478,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -496,10 +496,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона 2")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -507,8 +507,8 @@ public class FilmorateApplicationTest {
         Film addFilm1 = filmStorage.add(film1);
         User addUser2 = userStorage.add(user2);
         Film addFilm2 = filmStorage.add(film2);
-        likeStorage.add(1L, 1L);
-        likeStorage.add(1L, 2L);
+        likeStorage.addLike(1L, 1L);
+        likeStorage.addLike(1L, 2L);
         assertThat("Список лучших фильмов отличается от [1, 2]", likeStorage.getTheBestFilms(5),
                 contains(1L, 2L));
         assertThat("Список лучших фильмов отличается от [1]", likeStorage.getTheBestFilms(1),
@@ -549,10 +549,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(new ArrayList<>())
                 .build();
@@ -571,10 +571,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(List.of(genre3))
                 .build();
@@ -592,10 +592,10 @@ public class FilmorateApplicationTest {
                 .name("Как приручить дракона")
                 .description("Сын вождя заводит дружбу с драконом — врагом его племени. " +
                         "История о том, что ум и сочувствие куда важнее силы")
-                .releaseDate(LocalDate.of(2010, 3,18))
+                .releaseDate(LocalDate.of(2010, 3, 18))
                 .duration(98)
                 .rate(1)
-                .mpaRating(MpaRating.builder().id(1).name("G").build())
+                .mpa(Mpa.builder().id(1).name("G").build())
                 .likes(new ArrayList<>())
                 .genres(List.of(genre3))
                 .build();
@@ -606,25 +606,25 @@ public class FilmorateApplicationTest {
 
     @Test
     void getMpaRatingListTest() {
-        MpaRating mpaRating1 = MpaRating.builder()
+        Mpa mpa1 = Mpa.builder()
                 .id(1)
                 .name("G")
                 .build();
-        assertThat(mpaRatingStorage.getMpa(),hasSize(5));
-        assertThat(mpaRatingStorage.getMpa(), hasItem(mpaRating1));
+        assertThat(mpaRatingStorage.getMpa(), hasSize(5));
+        assertThat(mpaRatingStorage.getMpa(), hasItem(mpa1));
     }
 
     @Test
     void getMpaRatingById() {
-        MpaRating mpaRating1 = MpaRating.builder()
+        Mpa mpa1 = Mpa.builder()
                 .id(1)
                 .name("G")
                 .build();
-        MpaRating mpaRating5 = MpaRating.builder()
+        Mpa mpa5 = Mpa.builder()
                 .id(5)
                 .name("NC-17")
                 .build();
-        assertThat(mpaRatingStorage.getMpaById(1), equalTo(mpaRating1));
-        assertThat(mpaRatingStorage.getMpaById(5), equalTo(mpaRating5));
+        assertThat(mpaRatingStorage.getMpaById(1), equalTo(mpa1));
+        assertThat(mpaRatingStorage.getMpaById(5), equalTo(mpa5));
     }
 }

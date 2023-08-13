@@ -39,7 +39,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public Collection<User> getFriendsList(@PathVariable("id") Long id) {
-        User user = userService.findById(id);
+        userService.findById(id);
         Logger.logRequest(HttpMethod.GET, URI + "/" + id + "/friends", NO_BODY);
         List<User> friendList = userService.getListOfFriends(id);
         Logger.logInfo(String.format("Получен список друзей для пользователя id %d", id));

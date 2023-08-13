@@ -14,8 +14,9 @@ import java.util.Collection;
 
 @Repository
 @RequiredArgsConstructor
-public class GenreDao  implements GenreStorage {
+public class GenreDao implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
+
     @Override
     public Collection<Genre> getGenres() {
         String sqlQuery = "SELECT * FROM genres";

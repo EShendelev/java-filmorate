@@ -15,15 +15,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LikeDao implements LikeStorage {
     private final JdbcTemplate jdbcTemplate;
+
     @Override
-    public boolean add(long filmId, long userId) {
+    public boolean addLike(long filmId, long userId) {
         Like like = Like.builder()
                 .filmId(filmId)
                 .userId(userId)
                 .build();
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("likes");
-        return simpleJdbcInsert.execute(toMap(like)) > 0 ;
+        return simpleJdbcInsert.execute(toMap(like)) > 0;
     }
 
     @Override

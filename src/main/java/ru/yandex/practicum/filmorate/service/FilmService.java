@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -14,31 +14,28 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
-    FilmStorage filmStorage;
-    LikeStorage likeStorage;
+    private final FilmStorage filmStorage;
+    private final LikeStorage likeStorage;
+    private final UserService userService;
 
-    @Autowired
-    FilmService(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
 
-    }
-
-    public Film doLike(Long filmId, Long userId, boolean like) {
-        Film film = filmStorage.findById(filmId);
-
-        List<Long> rate = film.getLikes();
+    public boolean doLike(Long filmId, Long userId, boolean like) {
+        filmStorage.findById(filmId);
+        userService.findById(userId);
+        boolean done = false;
         if (userId <= 0) {
             throw new UserNotExistException(String.format("Пользователь с id %d не существует", userId));
         }
         if (like) {
-            rate.add(userId);
+            done = likeStorage.addLike(filmId, userId);
         } else {
-            rate.remove(userId);
+            done = likeStorage.unlike(filmId, userId);
         }
 
-        return film;
+        return done;
     }
 
     public Collection<Film> findPopularFilms(Integer count) {

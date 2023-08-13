@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface FilmGenreStorage {
     void addGenres(List<Genre> genres, long filmId);
+
     void deleteGenres(long filmId);
+
     List<Integer> getListOfGenres(long id);
 }
