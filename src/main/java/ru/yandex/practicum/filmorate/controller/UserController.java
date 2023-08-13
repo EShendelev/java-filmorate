@@ -19,8 +19,8 @@ public class UserController {
 
     private final UserService userService;
 
-    private final String URI = "/users";
-    private final String NO_BODY = "no body";
+    private static final String URI = "/users";
+    private static final String NO_BODY = "no body";
 
     @GetMapping
     public Collection<User> findAll() {

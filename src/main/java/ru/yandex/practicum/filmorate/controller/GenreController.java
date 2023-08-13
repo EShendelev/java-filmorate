@@ -18,8 +18,8 @@ import java.util.Collection;
 public class GenreController {
     private final GenreService genreService;
 
-    private final String URI = "/genres";
-    private final String NO_BODY = "no body";
+    private static final String URI = "/genres";
+    private static final String NO_BODY = "no body";
 
     @GetMapping
     public Collection<Genre> getGenres() {

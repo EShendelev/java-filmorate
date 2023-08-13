@@ -18,8 +18,8 @@ import java.util.Collection;
 public class MpaController {
     private final MpaService mpaService;
 
-    private final String URI = "/mpa";
-    private final String NO_BODY = "no body";
+    private static final String URI = "/mpa";
+    private static final String NO_BODY = "no body";
 
     @GetMapping
     public Collection<Mpa> getMpaRating() {
