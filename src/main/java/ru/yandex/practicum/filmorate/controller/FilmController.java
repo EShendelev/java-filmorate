@@ -20,19 +20,19 @@ import java.util.List;
 public class FilmController {
     private final FilmService filmService;
     static final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
-    private final String URI = "/films";
-    private final String NO_BODY = "no body";
+    private static final String URI = "/films";
+    private static final String NOBODY = "no body";
 
     @GetMapping
     public Collection<Film> findAll() {
-        Logger.logRequest(HttpMethod.GET, URI, NO_BODY);
+        Logger.logRequest(HttpMethod.GET, URI, NOBODY);
         Logger.logInfo("Получен весь список фильмов");
         return filmService.findAll();
     }
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable("id") Long id) {
-        Logger.logRequest(HttpMethod.GET, URI + "/" + id, NO_BODY);
+        Logger.logRequest(HttpMethod.GET, URI + "/" + id, NOBODY);
         Film findedFilm = filmService.findById(id);
         Logger.logInfo(String.format("Фильм id %d найден", id));
         return findedFilm;
@@ -40,14 +40,14 @@ public class FilmController {
 
     @GetMapping("/popular")
     public Collection<Film> getListOfPopularFilms(@RequestParam(defaultValue = "10") @Positive Integer count) {
-        Logger.logRequest(HttpMethod.GET, URI + "/popular?count=" + count, NO_BODY);
+        Logger.logRequest(HttpMethod.GET, URI + "/popular?count=" + count, NOBODY);
         Logger.logInfo("Показан список популярных фильмов");
         return filmService.findPopularFilms(count);
     }
 
     @GetMapping("/{id}/likes")
     public List<Long> getListOfLikes(@PathVariable long id) {
-        Logger.logRequest(HttpMethod.GET, URI + "/" + id + "/likes", NO_BODY);
+        Logger.logRequest(HttpMethod.GET, URI + "/" + id + "/likes", NOBODY);
         Logger.logInfo("Получен список id пользователей, поставивших лайк");
         return filmService.getListOfLikes(id);
     }
@@ -76,14 +76,14 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public void likeFilm(@PathVariable Long id, @PathVariable Long userId) {
-        Logger.logRequest(HttpMethod.PUT, URI + "/" + id + "/like/" + userId, NO_BODY);
+        Logger.logRequest(HttpMethod.PUT, URI + "/" + id + "/like/" + userId, NOBODY);
         filmService.doLike(id, userId, true);
         Logger.logInfo(String.format("Пользователь с id %d поставил лайк фильму с id %d", userId, id));
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLikeFilm(@PathVariable Long id, @PathVariable Long userId) {
-        Logger.logRequest(HttpMethod.DELETE, URI + "/" + id + "/like/" + userId, NO_BODY);
+        Logger.logRequest(HttpMethod.DELETE, URI + "/" + id + "/like/" + userId, NOBODY);
         filmService.doLike(id, userId, false);
         Logger.logInfo(String.format("Пользователь с id %d удалил лайк фильму с id %d", userId, id));
     }
