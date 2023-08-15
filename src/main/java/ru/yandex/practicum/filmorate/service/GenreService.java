@@ -19,10 +19,9 @@ public class GenreService {
     public Genre getGenreById(int id) {
         return genreStorage.getGenreById(id);
     }
-
-    //getListOfGenres выводит список жанров фильма по его id
-    public List<Genre> getListOfGenres(long id) {
-        return filmGenreStorage.getListOfGenres(id).stream().map(genreStorage::getGenreById)
+    
+    public List<Genre> getListOfGenres(long filmId) {
+        return filmGenreStorage.getListOfGenres(filmId).stream().map(genreStorage::getGenreById)
                 .collect(Collectors.toList());
     }
 

@@ -15,4 +15,6 @@ public interface FilmStorage {
     Film delete(Long id);
 
     Film findById(Long id);
+
+    boolean checkById(long id);
 }

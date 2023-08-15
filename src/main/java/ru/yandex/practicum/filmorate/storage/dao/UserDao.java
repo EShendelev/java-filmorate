@@ -89,4 +89,21 @@ public class UserDao implements UserStorage {
                 .friends(friendStorage.getListOfFriends(resultSet.getLong("id")))
                 .build();
     }
+
+    @Override
+    public boolean checkById(long id) {
+        if (id < 0) {
+            throw new ObjectNotFoundException("Ошибка: id не может быть меньше или равно нулю.");
+        }
+        String sqlQuery = "SELECT COUNT(*) FROM users WHERE id = ?";
+        boolean exists = false;
+        int count = 0;
+        try {
+            count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+        } catch (DataAccessException e) {
+            throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
+        }
+        exists = count > 0;
+        return exists;
+    }
 }

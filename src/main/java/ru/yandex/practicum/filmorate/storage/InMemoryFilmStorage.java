@@ -61,4 +61,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         return films.get(id);
     }
+
+    @Override
+    public boolean checkById(long id) {
+        return false;
+    }
 }

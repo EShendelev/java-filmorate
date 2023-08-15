@@ -13,5 +13,7 @@ public interface UserStorage {
 
     User delete(Long id);
 
+    boolean checkById(long id);
+
     User findById(Long id);
 }

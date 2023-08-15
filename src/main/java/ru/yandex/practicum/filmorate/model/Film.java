@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class Film {
-    @PositiveOrZero(message = "ID не может быть негативным или 0")
+    @Positive(message = "ID не может быть меньше или равно нулю")
     private Long id;
     @NotBlank(message = "Имя не может быть пустым")
     private String name;

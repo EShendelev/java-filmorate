@@ -50,7 +50,6 @@ public class FilmDao implements FilmStorage {
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             filmGenreStorage.addGenres(film.getGenres(), filmId);
         }
-        Film result = findById(filmId);
         return findById(filmId);
     }
 
@@ -128,6 +127,23 @@ public class FilmDao implements FilmStorage {
         }
         values.put("mpa_id", film.getMpa().getId());
         return values;
+    }
+
+    @Override
+    public boolean checkById(long id) {
+        if (id < 0) {
+            throw new ObjectNotFoundException("Ошибка: id не может быть меньше или равно нулю.");
+        }
+        String sqlQuery = "SELECT COUNT(*) FROM films WHERE id = ?";
+        boolean exists = false;
+        int count = 0;
+        try {
+            count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+        } catch (DataAccessException e) {
+            throw new ObjectNotFoundException(String.format("Фильм с id %s не найден", id));
+        }
+        exists = count > 0;
+        return exists;
     }
 
 

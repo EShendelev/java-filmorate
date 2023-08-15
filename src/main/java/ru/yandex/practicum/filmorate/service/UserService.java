@@ -19,20 +19,22 @@ public class UserService {
     private final FriendStorage friendStorage;
 
     public void addFriend(Long userId, Long friendId) {
-        User user = userStorage.findById(userId);
-        User friend = userStorage.findById(friendId);
-
-        boolean addition = friendStorage.addFriend(userId, friendId);
+        boolean checkUser = userStorage.checkById(userId);
+        boolean checkFriend = userStorage.checkById(friendId);
+        if (checkFriend && checkUser) {
+            boolean addition = friendStorage.addFriend(userId, friendId);
+        }
     }
 
     public void deleteFriend(Long userId, Long friendId) {
-        userStorage.findById(userId);
-        userStorage.findById(friendId);
-        boolean removal = friendStorage.removeFromFriends(userId, friendId);
-
-        if (!removal) {
-            throw new ObjectNotFoundException(String.format("Пользователь с id %d не в списке друзей" +
-                    " у пользователя с id %s", friendId, userId));
+        boolean checkUser = userStorage.checkById(userId);
+        boolean checkFriend = userStorage.checkById(friendId);
+        if (checkFriend && checkUser) {
+            boolean removal = friendStorage.removeFromFriends(userId, friendId);
+            if (!removal) {
+                throw new ObjectNotFoundException(String.format("Пользователь с id %d не в списке друзей" +
+                        " у пользователя с id %s", friendId, userId));
+            }
         }
     }
 
@@ -52,6 +54,10 @@ public class UserService {
 
     public Collection<User> findAll() {
         return userStorage.findAll();
+    }
+
+    public boolean checkById(long id) {
+        return userStorage.checkById(id);
     }
 
     public User findById(Long id) {

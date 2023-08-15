@@ -1,19 +1,19 @@
-delete from likes;
-delete from film_genre;
-delete from friends;
-delete from users;
-delete from films;
-alter table users alter COLUMN id RESTART with 1;
-alter table films alter COLUMN id RESTART with 1;
+DELETE FROM likes;
+DELETE FROM film_genre;
+DELETE FROM friends;
+DELETE FROM users;
+DELETE FROM films;
+ALTER TABLE users ALTER COLUMN id RESTART with 1;
+ALTER TABLE films ALTER COLUMN id RESTART with 1;
 
-merge into mpa_rating (id, name)
+MERGE INTO mpa_rating (id, name)
     VALUES (1, 'G'),
            (2, 'PG'),
            (3, 'PG-13'),
            (4, 'R'),
            (5, 'NC-17');
            
-merge into genres (id, name)
+MERGE INTO genres (id, name)
     VALUES (1, 'Комедия'),
            (2, 'Драма'),
            (3, 'Мультфильм'),

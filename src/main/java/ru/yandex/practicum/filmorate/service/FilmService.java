@@ -23,18 +23,16 @@ public class FilmService {
 
 
     public boolean doLike(Long filmId, Long userId, boolean like) {
-        filmStorage.findById(filmId);
-        userService.findById(userId);
+        boolean checkFilm = filmStorage.checkById(filmId);
+        boolean checkUser = userService.checkById(userId);
         boolean done = false;
-        if (userId <= 0) {
-            throw new UserNotExistException(String.format("Пользователь с id %d не существует", userId));
+        if (checkFilm && checkUser) {
+            if (like) {
+                done = likeStorage.addLike(filmId, userId);
+            } else {
+                done = likeStorage.unlike(filmId, userId);
+            }
         }
-        if (like) {
-            done = likeStorage.addLike(filmId, userId);
-        } else {
-            done = likeStorage.unlike(filmId, userId);
-        }
-
         return done;
     }
 
@@ -49,6 +47,10 @@ public class FilmService {
 
     public Film findById(Long id) {
         return filmStorage.findById(id);
+    }
+
+    public boolean checkById(long id) {
+        return filmStorage.checkById(id);
     }
 
     public Film update(Film film) {

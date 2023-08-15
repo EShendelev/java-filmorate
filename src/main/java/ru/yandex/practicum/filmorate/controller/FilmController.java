@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmValidateFailException;
-import ru.yandex.practicum.filmorate.log.Logger;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -17,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @RequiredArgsConstructor
+@Slf4j
 public class FilmController {
     private final FilmService filmService;
     static final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
@@ -25,30 +25,26 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> findAll() {
-        Logger.logRequest(HttpMethod.GET, URI, NOBODY);
-        Logger.logInfo("Получен весь список фильмов");
+        log.info("Получен весь список фильмов");
         return filmService.findAll();
     }
 
     @GetMapping("/{id}")
     public Film getFilm(@PathVariable("id") Long id) {
-        Logger.logRequest(HttpMethod.GET, URI + "/" + id, NOBODY);
         Film findedFilm = filmService.findById(id);
-        Logger.logInfo(String.format("Фильм id %d найден", id));
+        log.info("Фильм id {} найден", id);
         return findedFilm;
     }
 
     @GetMapping("/popular")
     public Collection<Film> getListOfPopularFilms(@RequestParam(defaultValue = "10") @Positive Integer count) {
-        Logger.logRequest(HttpMethod.GET, URI + "/popular?count=" + count, NOBODY);
-        Logger.logInfo("Показан список популярных фильмов");
+        log.info("Показан список популярных фильмов");
         return filmService.findPopularFilms(count);
     }
 
     @GetMapping("/{id}/likes")
     public List<Long> getListOfLikes(@PathVariable long id) {
-        Logger.logRequest(HttpMethod.GET, URI + "/" + id + "/likes", NOBODY);
-        Logger.logInfo("Получен список id пользователей, поставивших лайк");
+        log.info("Получен список id пользователей, поставивших лайк");
         return filmService.getListOfLikes(id);
     }
 
@@ -56,8 +52,7 @@ public class FilmController {
     public Film addFilm(@RequestBody @Valid Film film) {
         if (validateFilm(film)) {
             Film crFilm = filmService.add(film);
-            Logger.logRequest(HttpMethod.POST, URI, film.toString());
-            Logger.logInfo(String.format("Фильм \"%s\" добавлен", crFilm.getName()));
+            log.info(String.format("Фильм \"%s\" добавлен", crFilm.getName()));
             return crFilm;
         }
         return film;
@@ -66,9 +61,8 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@RequestBody @Valid Film film) {
         if (validateFilm(film)) {
-            Logger.logRequest(HttpMethod.PUT, URI, film.toString());
             Film upFilm = filmService.update(film);
-            Logger.logInfo(String.format("Фильм id %s обновлен", film.getId()));
+            log.info(String.format("Фильм id %s обновлен", film.getId()));
             return upFilm;
         }
         return film;
@@ -76,16 +70,14 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public void likeFilm(@PathVariable Long id, @PathVariable Long userId) {
-        Logger.logRequest(HttpMethod.PUT, URI + "/" + id + "/like/" + userId, NOBODY);
         filmService.doLike(id, userId, true);
-        Logger.logInfo(String.format("Пользователь с id %d поставил лайк фильму с id %d", userId, id));
+        log.info(String.format("Пользователь с id %d поставил лайк фильму с id %d", userId, id));
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void deleteLikeFilm(@PathVariable Long id, @PathVariable Long userId) {
-        Logger.logRequest(HttpMethod.DELETE, URI + "/" + id + "/like/" + userId, NOBODY);
         filmService.doLike(id, userId, false);
-        Logger.logInfo(String.format("Пользователь с id %d удалил лайк фильму с id %d", userId, id));
+        log.info(String.format("Пользователь с id %d удалил лайк фильму с id %d", userId, id));
     }
 
     boolean validateFilm(Film film) {
