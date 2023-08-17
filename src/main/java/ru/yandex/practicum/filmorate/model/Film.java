@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -26,11 +28,19 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
     private int rate;
+    @NotNull
     private Mpa mpa;
     private List<Long> likes;
     private List<Genre> genres;
 
     public Integer getLikesCount() {
         return likes.size();
+    }
+
+    public List<Genre> getGenres() {
+        if (this.genres == null) {
+            return new ArrayList<>();
+        }
+        return this.genres;
     }
 }

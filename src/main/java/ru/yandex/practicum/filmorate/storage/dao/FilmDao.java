@@ -73,11 +73,15 @@ public class FilmDao implements FilmStorage {
         Film filmBefore = findById(id);
 
         Collection<Genre> genreListBefore = filmBefore.getGenres();
-        if (genreListBefore != null && !genreListBefore.isEmpty()) {
+        if (genreListBefore.equals(film.getGenres())) {
+            return findById(id);
+        }
+
+        if (!genreListBefore.isEmpty()) {
             filmGenreStorage.deleteGenres(id);
         }
 
-        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+        if (!film.getGenres().isEmpty()) {
             filmGenreStorage.addGenres(film.getGenres(), id);
         }
 
@@ -118,9 +122,6 @@ public class FilmDao implements FilmStorage {
         values.put("release_date", film.getReleaseDate());
         values.put("duration", film.getDuration());
         values.put("rate", film.getRate());
-        if (film.getMpa() == null) {
-            film.setMpa(mpaService.getMpaRatingById(1));
-        }
         values.put("mpa_id", film.getMpa().getId());
         return values;
     }
