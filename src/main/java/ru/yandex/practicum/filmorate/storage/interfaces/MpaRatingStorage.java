@@ -9,5 +9,5 @@ public interface MpaRatingStorage {
     Collection<Mpa> getMpa();
 
     Mpa getMpaById(int mpaId);
-    
+
 }
