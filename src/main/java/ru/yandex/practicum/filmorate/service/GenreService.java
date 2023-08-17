@@ -21,8 +21,8 @@ public class GenreService {
     }
     
     public List<Genre> getListOfGenres(long filmId) {
-        return filmGenreStorage.getListOfGenres(filmId).stream().map(genreStorage::getGenreById)
-                .collect(Collectors.toList());
+        List<Integer> listGenresIds = filmGenreStorage.getListOfGenres(filmId);
+        return genreStorage.getGenreByListIds(listGenresIds);
     }
 
     public Collection<Genre> getGenres() {

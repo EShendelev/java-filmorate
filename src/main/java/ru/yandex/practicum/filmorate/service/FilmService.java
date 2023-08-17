@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,7 +67,10 @@ public class FilmService {
     }
 
     public List<Long> getListOfLikes(long id) {
-        filmStorage.findById(id);
-        return likeStorage.getLikesList(id);
+        List<Long> films = new ArrayList<>();
+        if (filmStorage.checkById(id)) {
+            films = likeStorage.getLikesList(id);
+        }
+        return films;
     }
 }

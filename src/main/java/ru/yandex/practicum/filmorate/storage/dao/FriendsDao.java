@@ -44,8 +44,7 @@ public class FriendsDao implements FriendStorage {
         String sqlQuery = "SELECT friend_id " +
                 "FROM (SELECT * FROM friends WHERE user_id = ? OR user_id = ?) " +
                 "GROUP BY friend_id HAVING (COUNT(*) > 1)";
-        List<Long> result = jdbcTemplate.queryForList(sqlQuery, Long.class, userId, otherId);
-        return result;
+        return jdbcTemplate.queryForList(sqlQuery, Long.class, userId, otherId);
     }
 
     private Map<String, Object> toMap(Friends friends) {

@@ -84,10 +84,6 @@ public class FilmDao implements FilmStorage {
         return findById(id);
     }
 
-    @Override
-    public Film delete(Long id) {
-        return null;
-    }
 
     @Override
     public Film findById(Long id) {

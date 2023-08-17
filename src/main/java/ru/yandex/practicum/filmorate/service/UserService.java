@@ -39,17 +39,11 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(Long userId, Long friendId) {
-        List<Long> friendsIds = userStorage.findById(userId).getFriends();
-        List<Long> friendsOfFriend = userStorage.findById(friendId).getFriends();
-        List<User> commonFriends = new ArrayList<>();
-
-        for (Long fr : friendsIds) {
-            if (friendsOfFriend.contains(fr)) {
-                commonFriends.add(userStorage.findById(fr));
-            }
+        List<Long> commonFriendsIds = new ArrayList<>();
+        if (userStorage.checkById(userId) && userStorage.checkById(friendId)) {
+            commonFriendsIds = friendStorage.getListOfMutualFriends(userId, friendId);
         }
-
-        return commonFriends;
+        return userStorage.getUsersByListIds(commonFriendsIds);
     }
 
     public Collection<User> findAll() {
@@ -76,15 +70,11 @@ public class UserService {
     }
 
     public List<User> getListOfFriends(long id) {
-        userStorage.findById(id);
-        return friendStorage.getListOfFriends(id).stream().map(userStorage::findById).collect(Collectors.toList());
-    }
-
-    public List<User> getListOfAMutualFriends(long id, long otherId) {
-        userStorage.findById(id);
-        userStorage.findById(otherId);
-        return friendStorage.getListOfMutualFriends(id, otherId).stream()
-                .map(userStorage::findById).collect(Collectors.toList());
+        List<Long> friendsIds = new ArrayList<>();
+        if (userStorage.checkById(id)) {
+            friendsIds = friendStorage.getListOfFriends(id);
+        }
+        return userStorage.getUsersByListIds(friendsIds);
     }
 
 }

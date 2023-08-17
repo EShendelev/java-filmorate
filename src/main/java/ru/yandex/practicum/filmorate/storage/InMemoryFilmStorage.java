@@ -40,16 +40,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film delete(Long id) {
-        if (!films.containsKey(id)) {
-            throw new FilmNotExistException(String.format("Ошибка удаления. Фильма id %d не существует", id));
-        }
-        Film film = films.get(id);
-        films.remove(id);
-        return film;
-    }
-
-    @Override
     public Collection<Film> findAll() {
         return films.values();
     }

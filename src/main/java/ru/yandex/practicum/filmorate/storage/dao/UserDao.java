@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
@@ -16,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -25,6 +29,7 @@ import java.util.Map;
 public class UserDao implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     private final FriendStorage friendStorage;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public Collection<User> findAll() {
@@ -54,11 +59,6 @@ public class UserDao implements UserStorage {
     }
 
     @Override
-    public User delete(Long id) {
-        return null;
-    }
-
-    @Override
     public User findById(Long id) {
         User user;
         String sqlQuery = "SELECT * FROM users WHERE id = ?";
@@ -70,6 +70,13 @@ public class UserDao implements UserStorage {
         return user;
     }
 
+    @Override
+    public List<User> getUsersByListIds(List<Long> ids) {
+        SqlParameterSource parameters = new MapSqlParameterSource("ids", ids);
+        String sqlQuery = "SELECT * FROM users WHERE id IN (:ids)";
+        return namedParameterJdbcTemplate.query(sqlQuery, parameters, this::mapRowToUser);
+    }
+    
     private Map<String, Object> toMap(User user) {
         Map<String, Object> values = new HashMap<>();
         values.put("email", user.getEmail());

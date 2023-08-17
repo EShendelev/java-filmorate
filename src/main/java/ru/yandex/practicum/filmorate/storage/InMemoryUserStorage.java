@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.utils.UserIdProvider;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -46,15 +47,10 @@ public class InMemoryUserStorage implements UserStorage {
         users.put(user.getId(), user);
         return user;
     }
-
+    
     @Override
-    public User delete(Long id) {
-        if (!users.containsKey(id)) {
-            throw new UserNotExistException(String.format("Ошибка удаления. Пользователя id %d не существует", id));
-        }
-        User user = users.get(id);
-        users.remove(id);
-        return user;
+    public List<User> getUsersByListIds(List<Long> ids) {
+        return null;
     }
 
     @Override
