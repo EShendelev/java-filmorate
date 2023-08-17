@@ -76,7 +76,7 @@ public class UserDao implements UserStorage {
         String sqlQuery = "SELECT * FROM users WHERE id IN (:ids)";
         return namedParameterJdbcTemplate.query(sqlQuery, parameters, this::mapRowToUser);
     }
-    
+
     private Map<String, Object> toMap(User user) {
         Map<String, Object> values = new HashMap<>();
         values.put("email", user.getEmail());
