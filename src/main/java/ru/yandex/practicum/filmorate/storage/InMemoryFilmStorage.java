@@ -52,6 +52,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
+    //заглушка для работы с внешней БД
     @Override
     public boolean checkById(long id) {
         return false;

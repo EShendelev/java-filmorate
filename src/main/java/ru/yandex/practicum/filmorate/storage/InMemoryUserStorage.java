@@ -48,11 +48,13 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
     
+    //заглушка для работы с внешней БД
     @Override
     public List<User> getUsersByListIds(List<Long> ids) {
         return null;
     }
 
+    //заглушка для работы с внешней БД
     @Override
     public boolean checkById(long id) {
         return false;
