@@ -47,7 +47,7 @@ public class InMemoryUserStorage implements UserStorage {
         users.put(user.getId(), user);
         return user;
     }
-    
+
     //заглушка для работы с внешней БД
     @Override
     public List<User> getUsersByListIds(List<Long> ids) {
