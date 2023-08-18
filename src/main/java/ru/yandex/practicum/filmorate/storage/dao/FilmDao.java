@@ -47,7 +47,7 @@ public class FilmDao implements FilmStorage {
                 .usingGeneratedKeyColumns("id");
         long filmId = simpleJdbcInsert.executeAndReturnKey(toMap(film)).longValue();
 
-        if (film.getGenres() != null && !film.getGenres().isEmpty()) {
+        if (!film.getGenres().isEmpty()) {
             filmGenreStorage.addGenres(film.getGenres(), filmId);
         }
         return findById(filmId);
