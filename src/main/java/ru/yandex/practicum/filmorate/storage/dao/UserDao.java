@@ -77,6 +77,14 @@ public class UserDao implements UserStorage {
         return namedParameterJdbcTemplate.query(sqlQuery, parameters, this::mapRowToUser);
     }
 
+    @Override
+    public List<User> getFriendsByUserId(long userId) {
+        String sqlQuery = "SELECT * FROM users AS u " +
+                "INNER JOIN friends AS f ON u.id = f.friend_id " +
+                "WHERE f.user_id = ?";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId);
+    }
+
     private Map<String, Object> toMap(User user) {
         Map<String, Object> values = new HashMap<>();
         values.put("email", user.getEmail());

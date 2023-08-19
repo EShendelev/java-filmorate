@@ -68,12 +68,12 @@ public class UserService {
         return userStorage.update(user);
     }
 
-    public List<User> getListOfFriends(long id) {
-        List<Long> friendsIds = new ArrayList<>();
-        if (userStorage.checkById(id)) {
-            friendsIds = friendStorage.getListOfFriends(id);
+    public List<User> getListOfFriends(long userId) {
+        List<User> friends = new ArrayList<>();
+        if (userStorage.checkById(userId)) {
+            friends = userStorage.getFriendsByUserId(userId);
         }
-        return userStorage.getUsersByListIds(friendsIds);
+        return friends;
     }
 
 }

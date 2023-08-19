@@ -56,6 +56,12 @@ public class InMemoryUserStorage implements UserStorage {
 
     //заглушка для работы с внешней БД
     @Override
+    public List<User> getFriendsByUserId(long userId) {
+        return null;
+    }
+
+    //заглушка для работы с внешней БД
+    @Override
     public boolean checkById(long id) {
         return false;
     }

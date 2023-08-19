@@ -3,9 +3,7 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -41,10 +39,11 @@ public class GenreDao implements GenreStorage {
     }
 
     @Override
-    public List<Genre> getGenreByListIds(List<Integer> ids) {
-        SqlParameterSource parameters = new MapSqlParameterSource("ids", ids);
-        String sqlQuery = "SELECT * FROM genres WHERE id IN (:ids)";
-        return namedParameterJdbcTemplate.query(sqlQuery, parameters, this::mapRowToGenre);
+    public List<Genre> getFilmGenres(long filmId) {
+        String sqlQuery = "SELECT * FROM genres AS g " +
+                "INNER JOIN film_genre AS f ON g.id = f.genre_id " +
+                "WHERE f.film_id = ?";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToGenre, filmId);
     }
 
     private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {

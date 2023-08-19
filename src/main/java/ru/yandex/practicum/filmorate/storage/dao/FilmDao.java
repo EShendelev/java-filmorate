@@ -72,9 +72,11 @@ public class FilmDao implements FilmStorage {
 
         Film filmBefore = findById(id);
 
+
         Collection<Genre> genreListBefore = filmBefore.getGenres();
-        if (genreListBefore.equals(film.getGenres())) {
-            return findById(id);
+        Collection<Genre> genreListUpdateFilm = film.getGenres();
+        if (genreListBefore.containsAll(genreListUpdateFilm) && genreListUpdateFilm.containsAll(genreListBefore)) {
+            return filmBefore;
         }
 
         if (!genreListBefore.isEmpty()) {
@@ -133,15 +135,8 @@ public class FilmDao implements FilmStorage {
         }
         String sqlQuery = "SELECT COUNT(*) FROM films WHERE id = ?";
         boolean exists = false;
-        int count = 0;
-        try {
-            count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
-        } catch (DataAccessException e) {
-            throw new ObjectNotFoundException(String.format("Фильм с id %s не найден", id));
-        }
+        int count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
         exists = count > 0;
         return exists;
     }
-
-
 }

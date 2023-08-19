@@ -14,6 +14,8 @@ public interface UserStorage {
 
     List<User> getUsersByListIds(List<Long> ids);
 
+    List<User> getFriendsByUserId(long userId);
+
     boolean checkById(long id);
 
     User findById(Long id);
