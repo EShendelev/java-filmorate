@@ -6,7 +6,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.utils.FilmIdProvider;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -38,16 +40,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film delete(Long id) {
-        if (!films.containsKey(id)) {
-            throw new FilmNotExistException(String.format("Ошибка удаления. Фильма id %d не существует", id));
-        }
-        Film film = films.get(id);
-        films.remove(id);
-        return film;
-    }
-
-    @Override
     public Collection<Film> findAll() {
         return films.values();
     }
@@ -58,5 +50,11 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FilmNotExistException(String.format("Ошибка поиска. Фильм id %d не найден", id));
         }
         return films.get(id);
+    }
+
+    //заглушка для работы с внешней БД
+    @Override
+    public boolean checkById(long id) {
+        return false;
     }
 }

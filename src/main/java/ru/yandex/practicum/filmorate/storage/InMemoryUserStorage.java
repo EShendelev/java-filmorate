@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.utils.UserIdProvider;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -47,14 +48,22 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    //заглушка для работы с внешней БД
     @Override
-    public User delete(Long id) {
-        if (!users.containsKey(id)) {
-            throw new UserNotExistException(String.format("Ошибка удаления. Пользователя id %d не существует", id));
-        }
-        User user = users.get(id);
-        users.remove(id);
-        return user;
+    public List<User> getUsersByListIds(List<Long> ids) {
+        return null;
+    }
+
+    //заглушка для работы с внешней БД
+    @Override
+    public List<User> getFriendsByUserId(long userId) {
+        return null;
+    }
+
+    //заглушка для работы с внешней БД
+    @Override
+    public boolean checkById(long id) {
+        return false;
     }
 
     @Override
@@ -65,7 +74,6 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(id);
     }
 
-    @Override
     public Collection<User> getFriendList(Collection<Long> idSet) {
         if (idSet.isEmpty()) {
             throw new UserNotExistException("Ошибка вывода списка друзей. Список друзей пуст");

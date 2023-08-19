@@ -1,42 +1,39 @@
 package ru.yandex.practicum.filmorate.service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
-    FilmStorage filmStorage;
+    private final FilmStorage filmStorage;
+    private final LikeStorage likeStorage;
+    private final UserService userService;
 
-    @Autowired
-    FilmService(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
 
-    }
-
-    public Film doLike(Long filmId, Long userId, boolean like) {
-        Film film = filmStorage.findById(filmId);
-
-        Set<Long> rate = film.getLikes();
-        if (userId <= 0) {
-            throw new UserNotExistException(String.format("Пользователь с id %d не существует", userId));
+    public boolean doLike(Long filmId, Long userId, boolean like) {
+        boolean checkFilm = filmStorage.checkById(filmId);
+        boolean checkUser = userService.checkById(userId);
+        boolean done = false;
+        if (checkFilm && checkUser) {
+            if (like) {
+                done = likeStorage.addLike(filmId, userId);
+            } else {
+                done = likeStorage.unlike(filmId, userId);
+            }
         }
-        if (like) {
-            rate.add(userId);
-        } else {
-            rate.remove(userId);
-        }
-
-        return film;
+        return done;
     }
 
     public Collection<Film> findPopularFilms(Integer count) {
@@ -52,6 +49,10 @@ public class FilmService {
         return filmStorage.findById(id);
     }
 
+    public boolean checkById(long id) {
+        return filmStorage.checkById(id);
+    }
+
     public Film update(Film film) {
         return filmStorage.update(film);
     }
@@ -62,5 +63,13 @@ public class FilmService {
 
     public Collection<Film> findAll() {
         return filmStorage.findAll();
+    }
+
+    public List<Long> getListOfLikes(long id) {
+        List<Long> films = new ArrayList<>();
+        if (filmStorage.checkById(id)) {
+            films = likeStorage.getLikesList(id);
+        }
+        return films;
     }
 }
