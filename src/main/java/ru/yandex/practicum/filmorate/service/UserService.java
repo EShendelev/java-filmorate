@@ -76,4 +76,7 @@ public class UserService {
         return friends;
     }
 
+    public void deleteUserById(long id) {
+        userStorage.deleteUserById(id);
+    }
 }

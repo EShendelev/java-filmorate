@@ -22,8 +22,6 @@ public class FilmController {
     private final FilmService filmService;
     private final DirectorService directorService;
     static final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
-    private static final String URI = "/films";
-    private static final String NOBODY = "no body";
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -85,6 +83,12 @@ public class FilmController {
     @GetMapping("/director/{directorId}")
     public List<Film> getFilmsByDirectorSorted(@PathVariable int directorId, @RequestParam String sortBy) {
         return directorService.getFilmsByDirectorSorted(directorId, sortBy);
+    }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilmById(@PathVariable long filmId) {
+        filmService.deleteFilmById(filmId);
+        log.info(String.format("Фильм с id=%d удален", filmId));
     }
 
     boolean validateFilm(Film film) {

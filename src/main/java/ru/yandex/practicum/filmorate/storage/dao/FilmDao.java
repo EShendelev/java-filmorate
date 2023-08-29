@@ -182,4 +182,13 @@ public class FilmDao implements FilmStorage {
         exists = count > 0;
         return exists;
     }
+
+    @Override
+    public void deleteFilmById(long id) {
+        if (!checkById(id)) {
+            throw new ObjectNotFoundException(String.format("Фильм с id %d не найден", id));
+        }
+        String sqlQuery = "DELETE FROM films WHERE id = ?";
+        jdbcTemplate.update(sqlQuery, id);
+    }
 }
