@@ -121,4 +121,13 @@ public class UserDao implements UserStorage {
         exists = count > 0;
         return exists;
     }
+
+    @Override
+    public void deleteUserById(long id) {
+        if (!checkById(id)) {
+            throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
+        }
+        String sqlQuery = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(sqlQuery, id);
+    }
 }

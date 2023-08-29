@@ -19,9 +19,6 @@ public class UserController {
 
     private final UserService userService;
 
-    private static final String URI = "/users";
-    private static final String NO_BODY = "no body";
-
     @GetMapping
     public Collection<User> findAll() {
         log.info("Получен список всех пользователей");
@@ -81,4 +78,9 @@ public class UserController {
         return userService.findById(friendId);
     }
 
+    @DeleteMapping("/{userId}")
+    public void deleteUserById(@PathVariable long userId) {
+        userService.deleteUserById(userId);
+        log.info(String.format("Пользователь с id=%d удален", userId));
+    }
 }
