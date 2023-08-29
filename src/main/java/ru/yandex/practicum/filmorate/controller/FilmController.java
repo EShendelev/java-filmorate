@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmValidateFailException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ import java.util.List;
 @Slf4j
 public class FilmController {
     private final FilmService filmService;
+    private final DirectorService directorService;
     static final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
     private static final String URI = "/films";
     private static final String NOBODY = "no body";
@@ -78,6 +80,11 @@ public class FilmController {
     public void deleteLikeFilm(@PathVariable Long id, @PathVariable Long userId) {
         filmService.doLike(id, userId, false);
         log.info(String.format("Пользователь с id %d удалил лайк фильму с id %d", userId, id));
+    }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getFilmsByDirectorSorted(@PathVariable int directorId, @RequestParam String sortBy) {
+        return directorService.getFilmsByDirectorSorted(directorId, sortBy);
     }
 
     boolean validateFilm(Film film) {

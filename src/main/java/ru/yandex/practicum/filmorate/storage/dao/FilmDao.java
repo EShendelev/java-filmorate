@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
+import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmGenreStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
@@ -20,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -32,6 +34,7 @@ public class FilmDao implements FilmStorage {
     private final LikeStorage likeStorage;
     private final GenreService genreService;
     private final FilmGenreStorage filmGenreStorage;
+    private final DirectorStorage directorStorage;
 
 
     @Override
@@ -50,12 +53,17 @@ public class FilmDao implements FilmStorage {
         if (!film.getGenres().isEmpty()) {
             filmGenreStorage.addGenres(film.getGenres(), filmId);
         }
+        directorStorage.addDirectors(film.getDirectors(), filmId);
+
         return findById(filmId);
     }
 
     @Override
     public Film update(Film film) {
         long id = film.getId();
+        if (!checkById(id)) {
+            throw new ObjectNotFoundException("нет фильма с таким id");
+        }
         String sqlQuery = "UPDATE films SET name = ?," +
                 "description = ?," +
                 "release_date = ?," +
@@ -75,19 +83,53 @@ public class FilmDao implements FilmStorage {
 
         Collection<Genre> genreListBefore = filmBefore.getGenres();
         Collection<Genre> genreListUpdateFilm = film.getGenres();
-        if (genreListBefore.containsAll(genreListUpdateFilm) && genreListUpdateFilm.containsAll(genreListBefore)) {
-            return filmBefore;
+        if (!genreListBefore.containsAll(genreListUpdateFilm) || !genreListUpdateFilm.containsAll(genreListBefore)) {
+            if (!genreListBefore.isEmpty()) {
+                filmGenreStorage.deleteGenres(id);
+            }
+            if (!film.getGenres().isEmpty()) {
+                filmGenreStorage.addGenres(film.getGenres(), id);
+            }
         }
 
-        if (!genreListBefore.isEmpty()) {
-            filmGenreStorage.deleteGenres(id);
-        }
-
-        if (!film.getGenres().isEmpty()) {
-            filmGenreStorage.addGenres(film.getGenres(), id);
-        }
+        directorStorage.deleteDirectorsFromFilm(id);
+        directorStorage.addDirectors(film.getDirectors(), id);
 
         return findById(id);
+    }
+
+    @Override
+    public List<Film> getFilmsByDirectorSorted(int directorId, String sortBy) {
+        if (!directorStorage.checkById(directorId)) {
+            throw new ObjectNotFoundException("нет режиссера с таким id");
+        }
+        String sqlQuery = "";
+        if (sortBy == null) {
+            sortBy = "";
+        }
+        if (sortBy.equals("year")) {
+            sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
+                    "FROM films AS f\n" +
+                    "INNER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
+                    "WHERE fd.director_id = ?\n" +
+                    "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
+                    "ORDER BY f.release_date";
+        } else if (sortBy.equals("likes")) {
+            sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
+                    "\tcount(SELECT * FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
+                    "FROM films AS f\n" +
+                    "INNER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
+                    "WHERE fd.director_id = ?\n" +
+                    "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
+                    "ORDER BY film_likes";
+        } else {
+            sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
+                    "FROM films AS f\n" +
+                    "INNER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
+                    "WHERE fd.director_id = ?" +
+                    "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n";
+        }
+        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
     }
 
 
@@ -114,6 +156,7 @@ public class FilmDao implements FilmStorage {
                 .mpa(mpaService.getMpaRatingById(resultSet.getInt("mpa_id")))
                 .likes(likeStorage.getLikesList(resultSet.getLong("id")))
                 .genres(genreService.getListOfGenres(resultSet.getLong("id")))
+                .directors(directorStorage.getDirectorsByFilmId(resultSet.getLong("id")))
                 .build();
     }
 

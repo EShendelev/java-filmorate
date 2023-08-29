@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.utils.FilmIdProvider;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -57,4 +58,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     public boolean checkById(long id) {
         return false;
     }
+
+    @Override
+    public List<Film> getFilmsByDirectorSorted(int directorId, String sortBy) {
+        throw new UnsupportedOperationException();
+    }
+
 }
