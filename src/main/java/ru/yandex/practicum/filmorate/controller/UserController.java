@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -46,6 +47,12 @@ public class UserController {
                                                  @PathVariable Long otherId) {
         log.info(String.format("Получен список общих друзей у пользователей с id %d и %d", id, otherId));
         return userService.getCommonFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}/feed")
+    public Collection<Event> getEventsByUserId(@PathVariable long id) {
+        log.info(String.format("Получен список событий пользователя с id %d", id));
+        return userService.getUserEvents(id);
     }
 
     @PostMapping
