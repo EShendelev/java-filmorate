@@ -72,8 +72,4 @@ public class FilmService {
         }
         return films;
     }
-
-    public void deleteFilmById(long id) {
-        filmStorage.deleteFilmById(id);
-    }
 }

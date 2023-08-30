@@ -135,7 +135,7 @@ public class FilmDao implements FilmStorage {
     @Override
     public List<Film> searchByFilmAndDirectorSorted(String query, String by) {
         String sqlQuery = "";
-        if(by.equals("title")){
+        if (by.equals("title")) {
             sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
                     "count(SELECT l.film_id FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
                     "FROM films AS f\n" +
@@ -214,14 +214,5 @@ public class FilmDao implements FilmStorage {
         int count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
         exists = count > 0;
         return exists;
-    }
-
-    @Override
-    public void deleteFilmById(long id) {
-        if (!checkById(id)) {
-            throw new ObjectNotFoundException(String.format("Фильм с id %d не найден", id));
-        }
-        String sqlQuery = "DELETE FROM films WHERE id = ?";
-        jdbcTemplate.update(sqlQuery, id);
     }
 }

@@ -77,10 +77,4 @@ public class UserController {
         log.info(String.format("Пользователь id %d удален из списка друзей пользователя id %d", friendId, id));
         return userService.findById(friendId);
     }
-
-    @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable long userId) {
-        userService.deleteUserById(userId);
-        log.info(String.format("Пользователь с id=%d удален", userId));
-    }
 }
