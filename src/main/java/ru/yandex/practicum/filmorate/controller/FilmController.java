@@ -87,6 +87,11 @@ public class FilmController {
         return directorService.getFilmsByDirectorSorted(directorId, sortBy);
     }
 
+    @GetMapping("/search")
+    public List<Film> searchByFilmAndDirectorSorted(@RequestParam String query, @RequestParam String by) {
+        return directorService.searchByFilmAndDirectorSorted(query, by);
+    }
+
     boolean validateFilm(Film film) {
         if (film.getReleaseDate().isBefore(MIN_DATE)) {
             throw new FilmValidateFailException("Дата релиза не может быть ранее 28.12.1985 г.");

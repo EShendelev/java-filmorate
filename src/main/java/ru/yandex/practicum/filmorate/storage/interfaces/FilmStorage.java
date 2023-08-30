@@ -18,4 +18,6 @@ public interface FilmStorage {
     boolean checkById(long id);
 
     List<Film> getFilmsByDirectorSorted(int directorId, String sortBy);
+
+    List<Film> searchByFilmAndDirectorSorted(String query, String by);
 }
