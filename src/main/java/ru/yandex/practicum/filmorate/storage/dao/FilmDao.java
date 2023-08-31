@@ -141,6 +141,39 @@ public class FilmDao implements FilmStorage {
         log.info(String.format("Пользователь с id=%d получил список рекомендаций", id));
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id, id, id, id);
     }
+  
+    @Override
+    public List<Film> searchByFilmAndDirectorSorted(String query, String by) {
+        String sqlQuery = "";
+        if (by.equals("title")) {
+            sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
+                    "count(SELECT l.film_id FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
+                    "FROM films AS f\n" +
+                    "WHERE f.name ILIKE CONCAT('%',?,'%')\n" +
+                    "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
+                    "ORDER BY film_likes\n";
+        } else if (by.equals("director")) {
+            sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
+                    "count(SELECT l.film_id FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
+                    "FROM films AS f\n" +
+                    "INNER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
+                    "INNER JOIN directors AS d ON d.id = fd.director_id\n" +
+                    "WHERE d.name ILIKE CONCAT('%',?,'%')\n" +
+                    "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
+                    "ORDER BY film_likes";
+        } else if (by.equals("director,title") || by.equals("title,director")) {
+            sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
+                    "count(SELECT l.film_id FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
+                    "FROM films AS f\n" +
+                    "LEFT OUTER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
+                    "LEFT OUTER JOIN directors AS d ON d.id = fd.director_id\n" +
+                    "WHERE f.name ILIKE CONCAT('%',?,'%') OR d.name ILIKE CONCAT('%',?,'%')\n" +
+                    "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
+                    "ORDER BY film_likes DESC";
+            return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query, query);
+        }
+        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query);
+    }
 
     @Override
     public Film findById(Long id) {

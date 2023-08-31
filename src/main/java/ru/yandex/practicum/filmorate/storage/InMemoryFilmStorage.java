@@ -71,4 +71,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     public List<Film> getFilmsByDirectorSorted(int directorId, String sortBy) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public List<Film> searchByFilmAndDirectorSorted(String query, String by) {
+        throw new UnsupportedOperationException();
+    }
 }
