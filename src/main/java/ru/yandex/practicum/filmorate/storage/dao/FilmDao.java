@@ -141,7 +141,7 @@ public class FilmDao implements FilmStorage {
         log.info(String.format("Пользователь с id=%d получил список рекомендаций", id));
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id, id, id, id);
     }
-  
+
     @Override
     public List<Film> searchByFilmAndDirectorSorted(String query, String by) {
         String sqlQuery = "";
