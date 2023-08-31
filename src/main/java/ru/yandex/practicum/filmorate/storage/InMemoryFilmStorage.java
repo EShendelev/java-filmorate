@@ -74,4 +74,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public Collection<Film> getCommonFilms(Integer id, Integer friendId) {
+        throw new UnsupportedOperationException();
+    }
+
 }
