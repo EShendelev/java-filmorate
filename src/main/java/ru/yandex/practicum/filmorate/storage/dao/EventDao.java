@@ -27,7 +27,7 @@ public class EventDao implements EventStorage {
     @Override
     public Event add(long userId, long entityId, String event, String operation) {
         Event feed = Event.builder()
-                .timeStamp(Timestamp.valueOf(LocalDateTime.now()).getTime())
+                .timestamp(Timestamp.valueOf(LocalDateTime.now()).getTime())
                 .userId(userId)
                 .entityId(entityId)
                 .eventType(event)
@@ -35,7 +35,7 @@ public class EventDao implements EventStorage {
                 .build();
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("events")
-                .usingGeneratedKeyColumns("id");
+                .usingGeneratedKeyColumns("event_id");
         long feedId = simpleJdbcInsert.executeAndReturnKey(feedToMap(feed)).longValue();
         return getFeedById(feedId);
     }
@@ -48,14 +48,14 @@ public class EventDao implements EventStorage {
 
     @Override
     public Event getFeedById(long eventId) {
-        String sqlQuery = "SELECT * FROM events WHERE id = ?";
+        String sqlQuery = "SELECT * FROM events WHERE event_id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFeed, eventId);
     }
 
     private Event mapRowToFeed(ResultSet resultSet, int rowNum) throws SQLException {
         return Event.builder()
-                .id(resultSet.getLong("id"))
-                .timeStamp(resultSet.getLong("event_time"))
+                .eventId(resultSet.getLong("event_id"))
+                .timestamp(resultSet.getLong("event_time"))
                 .userId(resultSet.getLong("user_id"))
                 .eventType(resultSet.getString("event_type"))
                 .operation(resultSet.getString("operation"))
@@ -65,8 +65,8 @@ public class EventDao implements EventStorage {
 
     private Map<String, Object> feedToMap(Event event) {
         Map<String, Object> values = new HashMap<>();
-        values.put("id", event.getId());
-        values.put("event_time", event.getTimeStamp());
+        values.put("event_id", event.getEventId());
+        values.put("event_time", event.getTimestamp());
         values.put("user_id", event.getUserId());
         values.put("event_type", event.getEventType());
         values.put("operation", event.getOperation());

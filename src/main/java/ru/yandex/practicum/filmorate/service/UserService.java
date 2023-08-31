@@ -77,7 +77,7 @@ public class UserService {
 
     public List<User> getListOfFriends(long userId) {
         List<User> friends = new ArrayList<>();
-        if (userStorage.checkById(userId)) {
+        if (checkById(userId)) {
             friends = userStorage.getFriendsByUserId(userId);
         }
         return friends;
@@ -88,6 +88,10 @@ public class UserService {
     }
 
     public Collection<Event> getUserEvents(long id) {
-        return eventStorage.getUserEvents(id);
+        Collection<Event> events = new ArrayList<>();
+        if (checkById(id)) {
+            events = eventStorage.getUserEvents(id);
+        }
+        return events;
     }
 }

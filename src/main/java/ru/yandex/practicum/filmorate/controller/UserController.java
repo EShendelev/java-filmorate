@@ -51,8 +51,9 @@ public class UserController {
 
     @GetMapping("/{id}/feed")
     public Collection<Event> getEventsByUserId(@PathVariable long id) {
+        Collection<Event> events = userService.getUserEvents(id);
         log.info(String.format("Получен список событий пользователя с id %d", id));
-        return userService.getUserEvents(id);
+        return events;
     }
 
     @PostMapping
