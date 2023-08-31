@@ -65,7 +65,6 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
-    //получение общих фильмов с другом
     public Collection<Film> getCommonFilms(Integer userId, Integer friendId) {
         return filmStorage.getCommonFilms(userId, friendId).stream()
                 .sorted((p0, p1) -> {
