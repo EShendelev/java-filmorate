@@ -174,7 +174,7 @@ public class FilmDao implements FilmStorage {
                 "WHERE EXISTS (SELECT 1 FROM likes l3 WHERE f.id = l3.film_id AND l3.user_id = ?) " +
                 "ORDER BY f.name";
 
-        Collection<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId, userId);
+        Collection<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
         return films;
     }
 
