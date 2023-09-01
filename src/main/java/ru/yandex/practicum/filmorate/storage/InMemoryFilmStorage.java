@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.utils.FilmIdProvider;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
@@ -59,6 +56,12 @@ public class InMemoryFilmStorage implements FilmStorage {
         return false;
     }
 
+    //заглушка для работы с внешней БД
+    @Override
+    public List<Film> getRecommendations(long id) {
+        return Collections.EMPTY_LIST;
+    }
+
     @Override
     public void deleteFilmById(long id) {
         films.remove(id);
@@ -74,9 +77,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         throw new UnsupportedOperationException();
     }
 
+
     @Override
     public Collection<Film> getCommonFilms(Integer id, Integer friendId) {
         throw new UnsupportedOperationException();
     }
-
 }
