@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS friends (
 	PRIMARY KEY (user_id, friend_id)
 );
 
-
 CREATE TABLE IF NOT EXISTS mpa_rating (
 	id INTEGER PRIMARY KEY,
 	name VARCHAR(30) NOT NULL
@@ -71,5 +70,3 @@ CREATE TABLE IF NOT EXISTS user_review
     review_id BIGINT REFERENCES films (id) ON DELETE CASCADE,
     is_like BOOLEAN
 );
-
-
