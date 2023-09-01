@@ -19,10 +19,12 @@ import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @Primary
@@ -163,6 +165,34 @@ public class FilmDao implements FilmStorage {
             return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query, query);
         }
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query);
+    }
+
+    @Override
+    public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
+        final Collection<String> params = new ArrayList<>();
+        String sql = "SELECT f.*, m.id AS mpa_id, m.name AS mpa_name FROM films f " +
+                "LEFT JOIN likes l ON f.id = l.film_id " +
+                "LEFT JOIN film_genre fg ON f.id = fg.film_id " +
+                "LEFT JOIN genres g ON fg.genre_id = g.id " +
+                "LEFT JOIN film_mpa_id fm ON f.id = fm.film_id " +
+                "LEFT JOIN mpa_rating m ON fm.mpa_id = m.id %s " +
+                "WHERE 1=1 %s " +
+                "GROUP BY f.id " +
+                "ORDER BY COUNT(l.film_id) DESC " +
+                "LIMIT ?";
+
+        if (Objects.nonNull(genreId)) {
+            params.add(String.format("AND g.id = %s", genreId));
+        }
+
+        if (Objects.nonNull(year)) {
+            params.add(String.format("AND YEAR(f.release_date) = %s", year));
+        }
+
+        final String genreAndYearParams = !params.isEmpty() ? String.join(" ", params) : "";
+        Collection<Film> films = jdbcTemplate.query(String.format(sql, genreAndYearParams), this::mapRowToFilm, count);
+
+        return films;
     }
 
     @Override

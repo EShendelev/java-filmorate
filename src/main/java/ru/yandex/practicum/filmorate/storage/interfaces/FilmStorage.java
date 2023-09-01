@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.interfaces;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
@@ -20,6 +21,8 @@ public interface FilmStorage {
     List<Film> getFilmsByDirectorSorted(int directorId, String sortBy);
 
     List<Film> searchByFilmAndDirectorSorted(String query, String by);
+
+    Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year);
 
     Collection<Film> getCommonFilms(Integer id, Integer friendId);
 
