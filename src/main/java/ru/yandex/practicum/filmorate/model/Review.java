@@ -36,6 +36,7 @@ public class Review {
     /**
      * Идентификатор пользователя, оставившего отзыв.
      */
+    @NotNull
     protected long userId;
 
     /**
