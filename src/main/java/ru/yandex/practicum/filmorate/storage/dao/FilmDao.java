@@ -38,7 +38,6 @@ public class FilmDao implements FilmStorage {
     private final FilmGenreStorage filmGenreStorage;
     private final DirectorStorage directorStorage;
 
-
     @Override
     public Collection<Film> findAll() {
         String sqlQuery = "SELECT * FROM films";
@@ -135,6 +134,17 @@ public class FilmDao implements FilmStorage {
     }
 
     @Override
+    public List<Film> getRecommendations(long id) {
+        String sqlQuery = "SELECT * FROM films WHERE id IN (SELECT film_id FROM likes WHERE film_id IN" +
+                " (SELECT film_id FROM likes WHERE user_id IN ((SELECT user_id FROM likes WHERE film_id IN" +
+                " (SELECT film_id FROM likes WHERE user_id = ?)" +
+                " AND NOT user_id = ? GROUP BY user_id ORDER BY COUNT(film_id) DESC LIMIT 1), ?)" +
+                " GROUP BY film_id HAVING COUNT(user_id) = 1) AND user_id <> ?)";
+        log.info(String.format("Пользователь с id=%d получил список рекомендаций", id));
+        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id, id, id, id);
+    }
+
+    @Override
     public List<Film> searchByFilmAndDirectorSorted(String query, String by) {
         String sqlQuery = "";
         if (by.equals("title")) {
@@ -166,6 +176,7 @@ public class FilmDao implements FilmStorage {
         }
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query);
     }
+
 
     @Override
     public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
@@ -204,6 +215,7 @@ public class FilmDao implements FilmStorage {
         Collection<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
         return films;
     }
+
 
     @Override
     public Film findById(Long id) {

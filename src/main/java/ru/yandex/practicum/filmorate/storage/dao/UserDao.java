@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.FriendStorage;
@@ -112,10 +113,8 @@ public class UserDao implements UserStorage {
         }
         String sqlQuery = "SELECT COUNT(*) FROM users WHERE id = ?";
         boolean exists = false;
-        int count = 0;
-        try {
-            count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
-        } catch (DataAccessException e) {
+        int count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+        if (count == 0) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
         }
         exists = count > 0;
