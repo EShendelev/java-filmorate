@@ -68,6 +68,15 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
+    public Collection<Film> getCommonFilms(Integer userId, Integer friendId) {
+        return filmStorage.getCommonFilms(userId, friendId).stream()
+                .sorted((p0, p1) -> {
+                    int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
+                    return -1 * comp;
+                })
+                .collect(Collectors.toList());
+    }
+
     public List<Long> getListOfLikes(long id) {
         List<Long> films = new ArrayList<>();
         if (filmStorage.checkById(id)) {
