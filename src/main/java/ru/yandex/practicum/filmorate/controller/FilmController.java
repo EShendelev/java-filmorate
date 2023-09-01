@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
