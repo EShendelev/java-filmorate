@@ -175,6 +175,18 @@ public class FilmDao implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query);
     }
 
+
+    @Override
+    public Collection<Film> getCommonFilms(Integer userId, Integer friendId) {
+        String sql = "SELECT DISTINCT f.* FROM films f " +
+                "JOIN likes l1 ON f.id = l1.film_id AND l1.user_id = ? " +
+                "JOIN likes l2 ON f.id = l2.film_id AND l2.user_id = ?";
+
+        Collection<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
+        return films;
+    }
+
+
     @Override
     public Film findById(Long id) {
         Film film;
