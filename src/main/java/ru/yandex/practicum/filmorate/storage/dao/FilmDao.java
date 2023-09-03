@@ -19,12 +19,10 @@ import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 @Primary
@@ -179,7 +177,7 @@ public class FilmDao implements FilmStorage {
 
 
     @Override
-    public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
+    public Collection<Film> getPopularFilm(Integer genreId, Integer year) {
         String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate " +
                 "FROM films f " +
                 "INNER JOIN film_genre fg ON f.id = fg.film_id " +

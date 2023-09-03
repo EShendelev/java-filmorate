@@ -82,7 +82,7 @@ public class FilmService {
                     })
                     .limit(count).collect(Collectors.toList());
         }
-        return filmStorage.getPopularFilm(count, genreId, year).stream()
+        return filmStorage.getPopularFilm(genreId, year).stream()
                 .sorted((p0, p1) -> {
                     int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
                     return -1 * comp;
