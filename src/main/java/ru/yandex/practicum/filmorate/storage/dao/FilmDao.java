@@ -180,29 +180,23 @@ public class FilmDao implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilm(Integer count,Integer genreId, Integer year) {
-        final Collection<String> params = new ArrayList<>();
-        String sql = "SELECT f.*, m.id AS mpa_id, m.name AS mpa_name FROM films f " +
+        String sql = "SELECT f.*, m.id AS mpa_id, m.name AS mpa_name " +
+                "FROM films f " +
                 "LEFT JOIN likes l ON f.id = l.film_id " +
                 "LEFT JOIN film_mpas fm ON f.id = fm.film_id " +
                 "LEFT JOIN mpas m ON fm.mpa_id = m.id " +
                 "LEFT JOIN film_genres fg ON f.id = fg.film_id " +
-                "%s " +
+                "WHERE (:genreId IS NULL OR fg.genre_id = :genreId) " +
+                "AND (:year IS NULL OR YEAR(f.release_date) = :year) " +
                 "GROUP BY f.name, f.id " +
-                "ORDER BY COUNT(l.film_id) DESC LIMIT ?";
+                "ORDER BY COUNT(l.film_id) DESC LIMIT :count";
 
-        if (Objects.nonNull(genreId)) {
-            params.add(String.format("AND fg.genre_id = %s", genreId));
-        }
+        List<Object> params = new ArrayList<>();
+        params.add(genreId);
+        params.add(year);
+        params.add(count);
 
-        if (Objects.nonNull(year)) {
-            params.add(String.format("AND YEAR(f.release_date) = %s", year));
-        }
-
-        final String genreAndYearParams = !params.isEmpty() ? "WHERE " + String.join(" AND ", params) : "";
-
-        Collection<Film> films = jdbcTemplate.query(String.format(sql, genreAndYearParams),this::mapRowToFilm, params.toArray());
-
-        return films;
+        return jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray());
     }
 
     @Override
