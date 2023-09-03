@@ -23,7 +23,7 @@ public interface FilmStorage {
 
     List<Film> searchByFilmAndDirectorSorted(String query, String by);
 
-    Collection<Film> getPopularFilm(Integer genreId, Integer year);
+    Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year);
 
     Collection<Film> getCommonFilms(Integer id, Integer friendId);
 

@@ -19,10 +19,12 @@ import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @Primary
@@ -177,17 +179,30 @@ public class FilmDao implements FilmStorage {
 
 
     @Override
-    public Collection<Film> getPopularFilm(Integer genreId, Integer year) {
-        String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate " +
-                "FROM films f " +
-                "INNER JOIN film_genre fg ON f.id = fg.film_id " +
-                "WHERE (? IS NULL OR fg.genre_id = ?) " +
-                "AND (? IS NULL OR EXTRACT(YEAR FROM f.release_date) = ?) " +
-                "ORDER BY f.rate DESC";
+    public Collection<Film> getPopularFilm(Integer count,Integer genreId, Integer year) {
+        final Collection<String> params = new ArrayList<>();
+        String sql = "SELECT f.*, m.id AS mpa_id, m.name AS mpa_name FROM films f " +
+                "LEFT JOIN likes l ON f.id = l.film_id " +
+                "LEFT JOIN film_mpas fm ON f.id = fm.film_id " +
+                "LEFT JOIN mpas m ON fm.mpa_id = m.id " +
+                "LEFT JOIN film_genres fg ON f.id = fg.film_id " +
+                "%s " +
+                "GROUP BY f.name, f.id " +
+                "ORDER BY COUNT(l.film_id) DESC LIMIT ?";
 
-        Object[] params = {genreId, genreId, year, year};
+        if (Objects.nonNull(genreId)) {
+            params.add(String.format("AND fg.genre_id = %s", genreId));
+        }
 
-        return jdbcTemplate.query(sql, params, this::mapRowToFilm);
+        if (Objects.nonNull(year)) {
+            params.add(String.format("AND YEAR(f.release_date) = %s", year));
+        }
+
+        final String genreAndYearParams = !params.isEmpty() ? "WHERE " + String.join(" AND ", params) : "";
+
+        Collection<Film> films = jdbcTemplate.query(String.format(sql, genreAndYearParams),this::mapRowToFilm, params.toArray());
+
+        return films;
     }
 
     @Override
