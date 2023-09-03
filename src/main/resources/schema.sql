@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS friends (
 	PRIMARY KEY (user_id, friend_id)
 );
 
-
 CREATE TABLE IF NOT EXISTS mpa_rating (
 	id INTEGER PRIMARY KEY,
 	name VARCHAR(30) NOT NULL
@@ -80,5 +79,3 @@ CREATE TABLE IF NOT EXISTS events (
     event_type VARCHAR,
     operation VARCHAR
 );
-
-

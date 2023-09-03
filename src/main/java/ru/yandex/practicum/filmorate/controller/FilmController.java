@@ -91,6 +91,17 @@ public class FilmController {
         log.info(String.format("Фильм с id=%d удален", filmId));
     }
 
+    @GetMapping("/search")
+    public List<Film> searchByFilmAndDirectorSorted(@RequestParam String query, @RequestParam String by) {
+        return directorService.searchByFilmAndDirectorSorted(query, by);
+    }
+
+    @GetMapping("/common")
+    public Collection<Film> getCommonFilms(@RequestParam(name = "userId") Integer userId,
+                                          @RequestParam(name = "friendId") Integer friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
+
     boolean validateFilm(Film film) {
         if (film.getReleaseDate().isBefore(MIN_DATE)) {
             throw new FilmValidateFailException("Дата релиза не может быть ранее 28.12.1985 г.");

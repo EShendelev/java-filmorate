@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.EventOperations;
@@ -15,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class FilmService {
@@ -24,7 +22,6 @@ public class FilmService {
     private final LikeStorage likeStorage;
     private final UserService userService;
     private final EventStorage eventStorage;
-
 
     public boolean doLike(Long filmId, Long userId, boolean like) {
         boolean checkFilm = filmStorage.checkById(filmId);
@@ -71,6 +68,15 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
+    public Collection<Film> getCommonFilms(Integer userId, Integer friendId) {
+        return filmStorage.getCommonFilms(userId, friendId).stream()
+                .sorted((p0, p1) -> {
+                    int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
+                    return -1 * comp;
+                })
+                .collect(Collectors.toList());
+    }
+
     public List<Long> getListOfLikes(long id) {
         List<Long> films = new ArrayList<>();
         if (filmStorage.checkById(id)) {
@@ -81,5 +87,9 @@ public class FilmService {
 
     public void deleteFilmById(long id) {
         filmStorage.deleteFilmById(id);
+    }
+
+    public List<Film> getRecommendations(long id) {
+        return filmStorage.getRecommendations(id);
     }
 }
