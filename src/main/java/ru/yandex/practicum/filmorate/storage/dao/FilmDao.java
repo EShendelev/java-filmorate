@@ -181,9 +181,9 @@ public class FilmDao implements FilmStorage {
         String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate " +
                 "FROM films f " +
                 "INNER JOIN film_genre fg ON f.id = fg.film_id " +
-                "WHERE (:genre IS NULL OR fg.genre_id = (SELECT id FROM genres WHERE name = :genre)) " +
-                "AND (:year IS NULL OR EXTRACT(YEAR FROM f.release_date) = :year) " +
-                "ORDER BY f.rate DESC ";
+                "WHERE (:genreParam IS NULL OR fg.genre_id = (SELECT id FROM genres WHERE name = :genreParam)) " +
+                "AND (:yearParam IS NULL OR EXTRACT(YEAR FROM f.release_date) = :yearParam) " +
+                "ORDER BY f.rate DESC";
 
         return jdbcTemplate.query(sql, this::mapRowToFilm, genreId, year, genreId, year);
     }
