@@ -39,19 +39,6 @@ public class FilmService {
         }
         return done;
     }
-/*
-    public Collection<Film> findPopularFilms(Integer count) {
-        return filmStorage.findAll().stream()
-                .sorted((p0, p1) -> {
-                    int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
-                    return -1 * comp;
-                })
-                .limit(count).collect(Collectors.toList());
-    }
-
- */
-
-
 
     public Film findById(Long id) {
         return filmStorage.findById(id);
