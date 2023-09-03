@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmGenreStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -185,14 +186,22 @@ public class FilmDao implements FilmStorage {
                 "LEFT JOIN film_mpas fm ON f.id = fm.film_id " +
                 "LEFT JOIN mpas m ON fm.mpa_id = m.id " +
                 "LEFT JOIN film_genres fg ON f.id = fg.film_id " +
-                "WHERE (:genreId IS NULL OR fg.genre_id = :genreId) " +
-                "AND (:year IS NULL OR YEAR(f.release_date) = :year) " +
-                "GROUP BY f.name, f.id " +
-                "ORDER BY COUNT(l.film_id) DESC LIMIT :count";
+                "WHERE 1=1";
 
         List<Object> params = new ArrayList<>();
-        params.add(genreId);
-        params.add(year);
+
+        if (genreId != null) {
+            sql += " AND fg.genre_id = ?";
+            params.add(genreId);
+        }
+
+        if (year != null) {
+            sql += " AND YEAR(f.release_date) = ?";
+            params.add(year);
+        }
+
+        sql += " GROUP BY f.name, f.id " +
+                "ORDER BY COUNT(l.film_id) DESC LIMIT ?";
         params.add(count);
 
         return jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray());

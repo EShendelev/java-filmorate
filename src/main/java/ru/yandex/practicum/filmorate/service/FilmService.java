@@ -87,7 +87,7 @@ public class FilmService {
                     int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
                     return -1 * comp;
                 })
-                .limit(count).collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     public Collection<Film> getCommonFilms(Integer userId, Integer friendId) {
