@@ -180,30 +180,14 @@ public class FilmDao implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
-        final Collection<String> params = new ArrayList<>();
-        String sql = "SELECT f.*, m.id AS mpa_id, m.name AS mpa_name FROM films f " +
-                "LEFT JOIN likes l ON f.id = l.film_id " +
-                "LEFT JOIN film_genre fg ON f.id = fg.film_id " +
-                "LEFT JOIN genres g ON fg.genre_id = g.id " +
-                "LEFT JOIN film_mpa_id fm ON f.id = fm.film_id " +
-                "LEFT JOIN mpa_rating m ON fm.mpa_id = m.id %s " +
-                "WHERE 1=1 %s " +
-                "GROUP BY f.id " +
-                "ORDER BY COUNT(l.film_id) DESC " +
-                "LIMIT ?";
+        String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate " +
+                "FROM films f " +
+                "INNER JOIN film_genre fg ON f.id = fg.film_id " +
+                "WHERE (:genre IS NULL OR fg.genre_id = (SELECT id FROM genres WHERE name = :genre)) " +
+                "AND (:year IS NULL OR EXTRACT(YEAR FROM f.release_date) = :year) " +
+                "ORDER BY f.rate DESC ";
 
-        if (Objects.nonNull(genreId)) {
-            params.add(String.format("AND g.id = %s", genreId));
-        }
-
-        if (Objects.nonNull(year)) {
-            params.add(String.format("AND YEAR(f.release_date) = %s", year));
-        }
-
-        final String genreAndYearParams = !params.isEmpty() ? String.join(" ", params) : "";
-        Collection<Film> films = jdbcTemplate.query(String.format(sql, genreAndYearParams), this::mapRowToFilm, count);
-
-        return films;
+        return jdbcTemplate.query(sql, this::mapRowToFilm, genreId, year, genreId, year);
     }
 
     @Override
