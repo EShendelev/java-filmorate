@@ -179,14 +179,11 @@ public class FilmDao implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilm(Integer count,Integer genreId, Integer year) {
-        String sql = "SELECT f.*, m.id AS mpa_id, m.name AS mpa_name " +
+        String sql = "SELECT f.*, COUNT(l.film_id) AS like_count " +
                 "FROM films f " +
                 "LEFT JOIN likes l ON f.id = l.film_id " +
-                "LEFT JOIN film_mpas fm ON f.id = fm.film_id " +
-                "LEFT JOIN mpas m ON fm.mpa_id = m.id " +
-                "LEFT JOIN film_genres fg ON f.id = fg.film_id " +
+                "LEFT JOIN film_genre fg ON f.id = fg.film_id " +
                 "WHERE 1=1";
-
         List<Object> params = new ArrayList<>();
 
         if (genreId != null) {
@@ -202,8 +199,9 @@ public class FilmDao implements FilmStorage {
         sql += " GROUP BY f.name, f.id " +
                 "ORDER BY COUNT(l.film_id) DESC LIMIT ?";
         params.add(count);
+        Collection<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray());
 
-        return jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray());
+        return films;
     }
 
     @Override
