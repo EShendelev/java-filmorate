@@ -112,13 +112,20 @@ public class UserDao implements UserStorage {
         }
         String sqlQuery = "SELECT COUNT(*) FROM users WHERE id = ?";
         boolean exists = false;
-        int count = 0;
-        try {
-            count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
-        } catch (DataAccessException e) {
+        int count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+        if (count == 0) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
         }
         exists = count > 0;
         return exists;
+    }
+
+    @Override
+    public void deleteUserById(long id) {
+        if (!checkById(id)) {
+            throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
+        }
+        String sqlQuery = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(sqlQuery, id);
     }
 }
