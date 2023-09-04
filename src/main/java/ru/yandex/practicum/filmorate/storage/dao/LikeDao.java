@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
@@ -17,12 +18,13 @@ public class LikeDao implements LikeStorage {
 
     @Override
     public boolean addLike(long filmId, long userId) {
-        if (checkLike(userId, filmId)) {
-            return true;
-        }
-        String sql = "MERGE INTO likes (FILM_ID, USER_ID) KEY(FILM_ID, USER_ID) VALUES (?, ?)";
-        int rowsAffected = jdbcTemplate.update(sql, filmId, userId);
-        return rowsAffected > 0;
+        Like like = Like.builder()
+                .filmId(filmId)
+                .userId(userId)
+                .build();
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("likes");
+        return simpleJdbcInsert.execute(toMap(like)) > 0;
     }
 
     @Override
@@ -53,10 +55,5 @@ public class LikeDao implements LikeStorage {
         values.put("user_Id", like.getUserId());
         values.put("film_Id", like.getFilmId());
         return values;
-    }
-
-    private boolean checkLike(long userId, long filmId) {
-        String sqlQuery = "SELECT COUNT(*) FROM likes WHERE user_id = ? AND film_id = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, Integer.class, userId, filmId) > 0;
     }
 }
