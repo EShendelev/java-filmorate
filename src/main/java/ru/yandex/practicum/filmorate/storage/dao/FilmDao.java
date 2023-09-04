@@ -19,6 +19,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -175,6 +176,33 @@ public class FilmDao implements FilmStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query);
     }
 
+
+    @Override
+    public Collection<Film> getPopularFilm(Integer count,Integer genreId, Integer year) {
+        String sql = "SELECT f.*, COUNT(l.film_id) AS like_count " +
+                "FROM films f " +
+                "LEFT JOIN likes l ON f.id = l.film_id " +
+                "LEFT JOIN film_genre fg ON f.id = fg.film_id " +
+                "WHERE 1=1";
+        List<Object> params = new ArrayList<>();
+
+        if (genreId != null) {
+            sql += " AND fg.genre_id = ?";
+            params.add(genreId);
+        }
+
+        if (year != null) {
+            sql += " AND YEAR(f.release_date) = ?";
+            params.add(year);
+        }
+
+        sql += " GROUP BY f.name, f.id " +
+                "ORDER BY COUNT(l.film_id) DESC LIMIT ?";
+        params.add(count);
+        Collection<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray());
+
+        return films;
+    }
 
     @Override
     public Collection<Film> getCommonFilms(Integer userId, Integer friendId) {

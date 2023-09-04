@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.EventOperations;
 import ru.yandex.practicum.filmorate.model.EventTypes;
+
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.EventStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
@@ -39,15 +40,6 @@ public class FilmService {
         return done;
     }
 
-    public Collection<Film> findPopularFilms(Integer count) {
-        return filmStorage.findAll().stream()
-                .sorted((p0, p1) -> {
-                    int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
-                    return -1 * comp;
-                })
-                .limit(count).collect(Collectors.toList());
-    }
-
     public Film findById(Long id) {
         return filmStorage.findById(id);
     }
@@ -66,6 +58,23 @@ public class FilmService {
 
     public Collection<Film> findAll() {
         return filmStorage.findAll();
+    }
+
+    public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
+        if (genreId == null && year == null) {
+            return filmStorage.findAll().stream()
+                    .sorted((p0, p1) -> {
+                        int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
+                        return -1 * comp;
+                    })
+                    .limit(count).collect(Collectors.toList());
+        }
+        return filmStorage.getPopularFilm(count,genreId, year).stream()
+                .sorted((p0, p1) -> {
+                    int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
+                    return -1 * comp;
+                })
+                .collect(Collectors.toList());
     }
 
     public Collection<Film> getCommonFilms(Integer userId, Integer friendId) {
