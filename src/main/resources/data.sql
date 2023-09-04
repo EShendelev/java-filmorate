@@ -6,6 +6,7 @@
 --DELETE FROM films;
 --DELETE FROM directors;
 --DELETE FROM reviews;
+--DELETE FROM user_review;
 --DELETE FROM events;
 --ALTER TABLE users ALTER COLUMN id RESTART with 1;
 --ALTER TABLE films ALTER COLUMN id RESTART with 1;

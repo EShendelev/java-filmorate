@@ -40,11 +40,13 @@ public class ReviewService {
         if (checkFilm && checkUser) {
             if (isAdd) {
                 result = reviewStorage.addReview(review);
-                eventStorage.add(userId, result.getReviewId(), EventTypes.REVIEW.name(), EventOperations.ADD.name());
+                eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW.name(),
+                        EventOperations.ADD.name());
                 return result;
             } else {
                 result = reviewStorage.updateReview(review);
-                eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW.name(), EventOperations.UPDATE.name());
+                eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW.name(),
+                        EventOperations.UPDATE.name());
                 return result;
             }
         } else if (!checkFilm) {
