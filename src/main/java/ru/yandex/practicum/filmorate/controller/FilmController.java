@@ -34,13 +34,6 @@ public class FilmController {
         log.info("Фильм id {} найден", id);
         return findedFilm;
     }
-/*
-    @GetMapping("/popular")
-    public Collection<Film> getListOfPopularFilms(@RequestParam(defaultValue = "10") @Positive Integer count) {
-        log.info("Показан список популярных фильмов");
-        return filmService.findPopularFilms(count);
-    }
-    */
 
     @GetMapping("/{id}/likes")
     public List<Long> getListOfLikes(@PathVariable long id) {
