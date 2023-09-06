@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.ReviewAddUpdateDto;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.EventOperations;
 import ru.yandex.practicum.filmorate.model.EventTypes;
@@ -37,13 +38,21 @@ public class ReviewService {
 
         boolean checkFilm = filmStorage.checkById(filmId);
         boolean checkUser = userService.checkById(userId);
+
         if (checkFilm && checkUser) {
+            ReviewAddUpdateDto reviewDto = ReviewAddUpdateDto.builder()
+                    .reviewId(review.getReviewId())
+                    .isPositive(review.getIsPositive())
+                    .content(review.getContent())
+                    .filmId(filmId)
+                    .userId(userId)
+                    .build();
             if (isAdd) {
-                result = reviewStorage.addReview(review);
+                result = reviewStorage.addReview(reviewDto);
                 eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW, EventOperations.ADD);
                 return result;
             } else {
-                result = reviewStorage.updateReview(review);
+                result = reviewStorage.updateReview(reviewDto);
                 eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW, EventOperations.UPDATE);
                 return result;
             }
@@ -86,7 +95,7 @@ public class ReviewService {
         reviewStorage.removeMarkFromReview(userId, reviewId);
     }
 
-    public Collection<Review> getReviewsByFilmId(long filmId, String count) {
+    public Collection<Review> getReviewsByFilmId(long filmId, Integer count) {
         if (!filmStorage.checkById(filmId)) {
             log.warn("Нет фильма с id = " + filmId);
             throw new FilmNotExistException("Нет фильма с id = " + filmId);
@@ -94,16 +103,10 @@ public class ReviewService {
 
         if (count == null) {
             return reviewStorage.getReviewsByFilmId(filmId, 10);
-        } else {
-            try {
-                int intCount = Integer.parseInt(count);
-                if (intCount < 0) {
-                    throw new IncorrectParameterException("count - не может быть меньше нуля!");
-                }
-                return reviewStorage.getReviewsByFilmId(filmId, intCount);
-            } catch (NumberFormatException e) {
-                throw new IncorrectParameterException("Неверный параметр - count");
-            }
         }
+        if (count < 0) {
+            throw new IncorrectParameterException("count - не может быть меньше нуля!");
+        }
+        return reviewStorage.getReviewsByFilmId(filmId, count);
     }
 }
