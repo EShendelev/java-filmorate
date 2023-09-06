@@ -61,10 +61,10 @@ CREATE TABLE IF NOT EXISTS reviews (
      is_positive BOOLEAN,
      user_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
      film_id BIGINT REFERENCES films (id) ON DELETE CASCADE,
-     useful INTEGER
+     useful INTEGER DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS user_review
+CREATE TABLE IF NOT EXISTS user_review_reactions
 (
     user_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
     review_id BIGINT REFERENCES films (id) ON DELETE CASCADE,
