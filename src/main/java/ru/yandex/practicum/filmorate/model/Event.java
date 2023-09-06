@@ -10,7 +10,7 @@ public class Event {
     private long timestamp;
     private long userId;
     private long entityId;
-    private String eventType;
-    private String operation;
+    private EventTypes eventType;
+    private EventOperations operation;
 }
 

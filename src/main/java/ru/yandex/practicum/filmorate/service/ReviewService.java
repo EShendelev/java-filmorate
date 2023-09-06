@@ -40,13 +40,11 @@ public class ReviewService {
         if (checkFilm && checkUser) {
             if (isAdd) {
                 result = reviewStorage.addReview(review);
-                eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW.name(),
-                        EventOperations.ADD.name());
+                eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW, EventOperations.ADD);
                 return result;
             } else {
                 result = reviewStorage.updateReview(review);
-                eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW.name(),
-                        EventOperations.UPDATE.name());
+                eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW, EventOperations.UPDATE);
                 return result;
             }
         } else if (!checkFilm) {
@@ -61,7 +59,7 @@ public class ReviewService {
     public void deleteReview(int reviewId) {
         long userId = reviewStorage.getReviewById(reviewId).getUserId();
         reviewStorage.deleteReview(reviewId);
-        eventStorage.add(userId, reviewId, EventTypes.REVIEW.name(), EventOperations.REMOVE.name());
+        eventStorage.add(userId, reviewId, EventTypes.REVIEW, EventOperations.REMOVE);
     }
 
     public Review getReviewById(int reviewId) {

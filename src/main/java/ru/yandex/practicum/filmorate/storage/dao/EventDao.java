@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.EventOperations;
+import ru.yandex.practicum.filmorate.model.EventTypes;
 import ru.yandex.practicum.filmorate.storage.interfaces.EventStorage;
 
 import java.sql.ResultSet;
@@ -25,7 +27,7 @@ public class EventDao implements EventStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Event add(long userId, long entityId, String event, String operation) {
+    public Event add(long userId, long entityId, EventTypes event, EventOperations operation) {
         Event feed = Event.builder()
                 .timestamp(Timestamp.valueOf(LocalDateTime.now()).getTime())
                 .userId(userId)
@@ -42,7 +44,9 @@ public class EventDao implements EventStorage {
 
     @Override
     public List<Event> getUserEvents(long userId) {
-        String sqlQuery = "SELECT * FROM events WHERE user_id = ?";
+        String sqlQuery = "SELECT * FROM events " +
+                "WHERE user_id = ? " +
+                "ORDER BY user_id DESC";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFeed, userId);
     }
 
@@ -57,8 +61,8 @@ public class EventDao implements EventStorage {
                 .eventId(resultSet.getLong("event_id"))
                 .timestamp(resultSet.getLong("event_time"))
                 .userId(resultSet.getLong("user_id"))
-                .eventType(resultSet.getString("event_type"))
-                .operation(resultSet.getString("operation"))
+                .eventType(EventTypes.valueOf(resultSet.getString("event_type")))
+                .operation(EventOperations.valueOf(resultSet.getString("operation")))
                 .entityId(resultSet.getLong("entity_id"))
                 .build();
     }
