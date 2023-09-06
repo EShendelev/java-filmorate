@@ -13,10 +13,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,6 +35,23 @@ public class DirectorDao implements DirectorStorage {
     }
 
     @Override
+    public Map<Long, List<Director>> getDirectorsByFilmIds(List<Long> filmIds) {
+        String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
+        String sqlQuery = "SELECT * FROM directors AS d " +
+                "INNER JOIN film_directors AS f ON d.id = f.director_id " +
+                "WHERE f.film_id IN (%s)".formatted(inSql);
+        List<Director> directorsList = jdbcTemplate.query(sqlQuery, this::mapRowToDirectorWithFilmId, filmIds.toArray());
+        Map<Long, List<Director>> directorsMap = new HashMap<>();
+        for (Long filmId : filmIds) {
+            directorsMap.put(filmId, new ArrayList<>());
+        }
+        for (Director director : directorsList) {
+            directorsMap.get(director.getFilmId()).add(director);
+        }
+        return directorsMap;
+    }
+
+    @Override
     public Director addDirector(Director director) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("directors")
@@ -49,9 +63,6 @@ public class DirectorDao implements DirectorStorage {
     @Override
     public void addDirectors(List<Director> directors, long filmId) {
         String sqlQuery = "INSERT INTO film_directors (film_id, director_id) VALUES (?, ?)";
-        List<Director> uniqueDirectors = directors.stream()
-                .distinct()
-                .collect(Collectors.toList());
         for (Director director : directors) {
             if (!checkById(director.getId())) {
                 throw new ObjectNotFoundException("нет режиссера с таким id");
@@ -60,14 +71,14 @@ public class DirectorDao implements DirectorStorage {
         jdbcTemplate.batchUpdate(sqlQuery, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-                Director director = uniqueDirectors.get(i);
+                Director director = directors.get(i);
                 ps.setLong(1, filmId);
                 ps.setInt(2, director.getId());
             }
 
             @Override
             public int getBatchSize() {
-                return uniqueDirectors.size();
+                return directors.size();
             }
         });
     }
@@ -124,6 +135,14 @@ public class DirectorDao implements DirectorStorage {
         return Director.builder()
                 .id(resultSet.getInt("id"))
                 .name(resultSet.getString("name"))
+                .build();
+    }
+
+    private Director mapRowToDirectorWithFilmId(ResultSet resultSet, int rowNum) throws SQLException {
+        return Director.builder()
+                .id(resultSet.getInt("id"))
+                .name(resultSet.getString("name"))
+                .filmId(resultSet.getLong("film_id"))
                 .build();
     }
 

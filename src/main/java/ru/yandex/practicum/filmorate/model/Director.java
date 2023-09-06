@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,4 +14,6 @@ public class Director {
     private int id;
     @NotBlank(message = "Имя не может быть пустым")
     private String name;
+    @JsonIgnore
+    private Long filmId;
 }

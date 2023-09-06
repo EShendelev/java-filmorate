@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +26,10 @@ public class DirectorService {
 
     public Collection<Director> getDirectors() {
         return directorStorage.getDirectors();
+    }
+
+    public Map<Long, List<Director>> getDirectorsByFilmIds(List<Long> ids) {
+        return directorStorage.getDirectorsByFilmIds(ids);
     }
 
     public Director addDirector(Director director) {

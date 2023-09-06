@@ -3,11 +3,14 @@ package ru.yandex.practicum.filmorate.storage.interfaces;
 import ru.yandex.practicum.filmorate.model.Director;
 
 import java.util.List;
+import java.util.Map;
 
 public interface DirectorStorage {
     List<Director> getDirectors();
 
     List<Director> getDirectorsByFilmId(long filmId);
+
+    Map<Long, List<Director>> getDirectorsByFilmIds(List<Long> filmIds);
 
     Director getDirectorById(int directorId);
 
