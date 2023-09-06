@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -32,7 +32,7 @@ public class GenreDao implements GenreStorage {
         String sqlQuery = "SELECT * FROM genres WHERE id = ?";
         try {
             genre = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, genreId);
-        } catch (DataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new ObjectNotFoundException(String.format("Жанр с ID %d не найден", genreId));
         }
         return genre;

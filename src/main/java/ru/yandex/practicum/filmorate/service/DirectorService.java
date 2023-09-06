@@ -3,12 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,13 +40,5 @@ public class DirectorService {
 
     public void deleteDirectorsFromFilm(long filmId) {
         directorStorage.deleteDirectorsFromFilm(filmId);
-    }
-
-    public List<Film> getFilmsByDirectorSorted(int directorId, String sortBy) {
-        return filmStorage.getFilmsByDirectorSorted(directorId, sortBy);
-    }
-
-    public List<Film> searchByFilmAndDirectorSorted(String query, String by) {
-        return filmStorage.searchByFilmAndDirectorSorted(query, by);
     }
 }

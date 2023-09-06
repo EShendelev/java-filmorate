@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.interfaces;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.SearchBy;
+import ru.yandex.practicum.filmorate.model.SortBy;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,11 +19,11 @@ public interface FilmStorage {
 
     boolean checkById(long id);
 
-    List<Film> getFilmsByDirectorSorted(int directorId, String sortBy);
+    List<Film> getFilmsByDirectorSorted(int directorId, SortBy sortBy);
 
     List<Film> getRecommendations(long id);
 
-    List<Film> searchByFilmAndDirectorSorted(String query, String by);
+    List<Film> searchByFilmAndDirectorSorted(String query, SearchBy searchBy);
 
     Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year);
 

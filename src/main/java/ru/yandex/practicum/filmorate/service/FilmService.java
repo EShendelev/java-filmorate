@@ -2,9 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.EventOperations;
-import ru.yandex.practicum.filmorate.model.EventTypes;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.interfaces.EventStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
@@ -34,6 +32,11 @@ public class FilmService {
             } else {
                 done = likeStorage.unlike(filmId, userId);
                 eventStorage.add(userId, filmId, EventTypes.LIKE,EventOperations.REMOVE);
+
+                eventStorage.add(userId, filmId, EventTypes.LIKE.toString(), EventOperations.ADD.name());
+            } else {
+                done = likeStorage.unlike(filmId, userId);
+                eventStorage.add(userId, filmId, EventTypes.LIKE.toString(), EventOperations.REMOVE.name());
             }
         }
         return done;
@@ -60,15 +63,7 @@ public class FilmService {
     }
 
     public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
-        if (genreId == null && year == null) {
-            return filmStorage.findAll().stream()
-                    .sorted((p0, p1) -> {
-                        int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
-                        return -1 * comp;
-                    })
-                    .limit(count).collect(Collectors.toList());
-        }
-        return filmStorage.getPopularFilm(count,genreId, year).stream()
+        return filmStorage.getPopularFilm(count, genreId, year).stream()
                 .sorted((p0, p1) -> {
                     int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
                     return -1 * comp;
@@ -99,5 +94,13 @@ public class FilmService {
 
     public List<Film> getRecommendations(long id) {
         return filmStorage.getRecommendations(id);
+    }
+
+    public List<Film> getFilmsByDirectorSorted(int directorId, SortBy sortBy) {
+        return filmStorage.getFilmsByDirectorSorted(directorId, sortBy);
+    }
+
+    public List<Film> searchByFilmAndDirectorSorted(String query, SearchBy searchBy) {
+        return filmStorage.searchByFilmAndDirectorSorted(query, searchBy);
     }
 }

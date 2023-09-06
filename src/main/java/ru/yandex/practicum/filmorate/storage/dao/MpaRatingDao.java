@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -32,7 +32,7 @@ public class MpaRatingDao implements MpaRatingStorage {
         String sqlQuery = "SELECT * FROM mpa_rating WHERE id = ?";
         try {
             mpa = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpaRating, mpaId);
-        } catch (DataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new ObjectNotFoundException(String.format("МРА с ID %d не найдено", mpaId));
         }
         return mpa;

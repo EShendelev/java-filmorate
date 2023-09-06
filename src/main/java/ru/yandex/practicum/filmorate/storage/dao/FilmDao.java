@@ -3,13 +3,15 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.SearchBy;
+import ru.yandex.practicum.filmorate.model.SortBy;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
@@ -83,34 +85,36 @@ public class FilmDao implements FilmStorage {
             if (!genreListBefore.isEmpty()) {
                 filmGenreStorage.deleteGenres(id);
             }
-            if (!film.getGenres().isEmpty()) {
+            if (!genreListUpdateFilm.isEmpty()) {
                 filmGenreStorage.addGenres(film.getGenres(), id);
             }
         }
-
-        directorStorage.deleteDirectorsFromFilm(id);
-        directorStorage.addDirectors(film.getDirectors(), id);
-
+        if (!new HashSet<>(filmBefore.getDirectors()).containsAll(film.getDirectors()) ||
+                !new HashSet<>(film.getDirectors()).containsAll(filmBefore.getDirectors())) {
+            if (!filmBefore.getDirectors().isEmpty()) {
+                directorStorage.deleteDirectorsFromFilm(id);
+            }
+            if (!film.getDirectors().isEmpty()) {
+                directorStorage.addDirectors(film.getDirectors(), id);
+            }
+        }
         return findById(id);
     }
 
     @Override
-    public List<Film> getFilmsByDirectorSorted(int directorId, String sortBy) {
+    public List<Film> getFilmsByDirectorSorted(int directorId, SortBy sortBy) {
         if (!directorStorage.checkById(directorId)) {
             throw new ObjectNotFoundException("нет режиссера с таким id");
         }
         String sqlQuery = "";
-        if (sortBy == null) {
-            sortBy = "";
-        }
-        if (sortBy.equals("year")) {
+        if (sortBy.equals(SortBy.YEAR)) {
             sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
                     "FROM films AS f\n" +
                     "INNER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
                     "WHERE fd.director_id = ?\n" +
                     "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
                     "ORDER BY f.release_date";
-        } else if (sortBy.equals("likes")) {
+        } else if (sortBy.equals(SortBy.LIKES)) {
             sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
                     "\tcount(SELECT * FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
                     "FROM films AS f\n" +
@@ -118,7 +122,7 @@ public class FilmDao implements FilmStorage {
                     "WHERE fd.director_id = ?\n" +
                     "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
                     "ORDER BY film_likes";
-        } else {
+        } else if (sortBy.equals(SortBy.NO_SORT)) {
             sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
                     "FROM films AS f\n" +
                     "INNER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
@@ -140,32 +144,30 @@ public class FilmDao implements FilmStorage {
     }
 
     @Override
-    public List<Film> searchByFilmAndDirectorSorted(String query, String by) {
+    public List<Film> searchByFilmAndDirectorSorted(String query, SearchBy searchBy) {
         String sqlQuery = "";
-        if (by.equals("title")) {
+        if (searchBy == SearchBy.TITLE) {
             sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
-                    "count(SELECT l.film_id FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
+                    "(SELECT count(l.film_id) FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
                     "FROM films AS f\n" +
                     "WHERE f.name ILIKE CONCAT('%',?,'%')\n" +
                     "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
                     "ORDER BY film_likes\n";
-        } else if (by.equals("director")) {
+        } else if (searchBy == SearchBy.DIRECTOR) {
             sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
-                    "count(l.film_id) AS film_likes\n" +
+                    "(SELECT count(l.film_id) FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
                     "FROM films AS f\n" +
                     "INNER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
                     "INNER JOIN directors AS d ON d.id = fd.director_id\n" +
-                    "INNER JOIN likes AS l ON f.id = l.film_id\n" +
                     "WHERE d.name ILIKE CONCAT('%',?,'%')\n" +
                     "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
                     "ORDER BY film_likes";
-        } else if (by.equals("director,title") || by.equals("title,director")) {
+        } else if (searchBy == SearchBy.TITLEANDDIRECTOR) {
             sqlQuery = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id,\n" +
-                    "       COUNT(l.film_id) AS film_likes\n" +
+                    "(SELECT count(l.film_id) FROM likes AS l WHERE l.film_id = f.id) AS film_likes\n" +
                     "FROM films AS f\n" +
                     "LEFT OUTER JOIN film_directors AS fd ON f.id = fd.film_id\n" +
                     "LEFT OUTER JOIN directors AS d ON d.id = fd.director_id\n" +
-                    "LEFT OUTER JOIN likes AS l ON f.id = l.film_id\n" +
                     "WHERE f.name ILIKE CONCAT('%',?,'%') OR d.name ILIKE CONCAT('%',?,'%')\n" +
                     "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
                     "ORDER BY film_likes DESC;";
@@ -173,7 +175,6 @@ public class FilmDao implements FilmStorage {
         }
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query);
     }
-
 
     @Override
     public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
@@ -219,7 +220,7 @@ public class FilmDao implements FilmStorage {
         String sqlQuery = "SELECT * FROM films WHERE id = ?";
         try {
             film = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
-        } catch (DataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new ObjectNotFoundException(String.format("Фильм с id %d не найден", id));
         }
         return film;

@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -91,7 +91,7 @@ public class DirectorDao implements DirectorStorage {
         String sqlQuery = "SELECT * FROM directors WHERE id = ?";
         try {
             director = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToDirector, id);
-        } catch (DataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new ObjectNotFoundException(String.format("Режиссер с ID %d не найден", id));
         }
         return director;
@@ -115,9 +115,6 @@ public class DirectorDao implements DirectorStorage {
 
     @Override
     public boolean checkById(int id) {
-        if (id < 0) {
-            throw new ObjectNotFoundException("Ошибка: id не может быть меньше или равно нулю.");
-        }
         String sqlQuery = "SELECT COUNT(*) FROM directors WHERE id = ?";
         int count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
         return count > 0;
