@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -64,7 +64,7 @@ public class UserDao implements UserStorage {
         String sqlQuery = "SELECT * FROM users WHERE id = ?";
         try {
             user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
-        } catch (DataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
         }
         return user;
