@@ -8,10 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.SearchBy;
-import ru.yandex.practicum.filmorate.model.SortBy;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
@@ -22,6 +19,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Primary
@@ -38,7 +36,7 @@ public class FilmDao implements FilmStorage {
     @Override
     public Collection<Film> findAll() {
         String sqlQuery = "SELECT * FROM films";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
+        return setAnotherFieldsForFilms(jdbcTemplate.query(sqlQuery, this::mapRowToFilm));
     }
 
     @Override
@@ -129,7 +127,7 @@ public class FilmDao implements FilmStorage {
                     "WHERE fd.director_id = ?" +
                     "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n";
         }
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId);
+        return setAnotherFieldsForFilms(jdbcTemplate.query(sqlQuery, this::mapRowToFilm, directorId));
     }
 
     @Override
@@ -140,7 +138,7 @@ public class FilmDao implements FilmStorage {
                 " AND NOT user_id = ? GROUP BY user_id ORDER BY COUNT(film_id) DESC LIMIT 1), ?)" +
                 " GROUP BY film_id HAVING COUNT(user_id) = 1) AND user_id <> ?)";
         log.info(String.format("Пользователь с id=%d получил список рекомендаций", id));
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id, id, id, id);
+        return setAnotherFieldsForFilms(jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id, id, id, id));
     }
 
     @Override
@@ -171,9 +169,9 @@ public class FilmDao implements FilmStorage {
                     "WHERE f.name ILIKE CONCAT('%',?,'%') OR d.name ILIKE CONCAT('%',?,'%')\n" +
                     "GROUP BY f.id, f.name, f.description, f.release_date, f.duration, f.rate, f.mpa_id\n" +
                     "ORDER BY film_likes DESC;";
-            return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query, query);
+            return setAnotherFieldsForFilms(jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query, query));
         }
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query);
+        return setAnotherFieldsForFilms(jdbcTemplate.query(sqlQuery, this::mapRowToFilm, query));
     }
 
     @Override
@@ -198,7 +196,7 @@ public class FilmDao implements FilmStorage {
         sql += " GROUP BY f.name, f.id " +
                 "ORDER BY COUNT(l.film_id) DESC LIMIT ?";
         params.add(count);
-        Collection<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray());
+        Collection<Film> films = setAnotherFieldsForFilms(jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray()));
 
         return films;
     }
@@ -209,7 +207,7 @@ public class FilmDao implements FilmStorage {
                 "JOIN likes l1 ON f.id = l1.film_id AND l1.user_id = ? " +
                 "JOIN likes l2 ON f.id = l2.film_id AND l2.user_id = ?";
 
-        Collection<Film> films = jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId);
+        Collection<Film> films = setAnotherFieldsForFilms(jdbcTemplate.query(sql, this::mapRowToFilm, userId, friendId));
         return films;
     }
 
@@ -219,7 +217,7 @@ public class FilmDao implements FilmStorage {
         Film film;
         String sqlQuery = "SELECT * FROM films WHERE id = ?";
         try {
-            film = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
+            film = setAnotherFieldsForFilm(jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id));
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new ObjectNotFoundException(String.format("Фильм с id %d не найден", id));
         }
@@ -234,11 +232,34 @@ public class FilmDao implements FilmStorage {
                 .releaseDate(resultSet.getDate("release_date").toLocalDate())
                 .duration(resultSet.getInt("duration"))
                 .rate(resultSet.getInt("rate"))
-                .mpa(mpaService.getMpaRatingById(resultSet.getInt("mpa_id")))
-                .likes(likeStorage.getLikesList(resultSet.getLong("id")))
-                .genres(genreService.getListOfGenres(resultSet.getLong("id")))
-                .directors(directorStorage.getDirectorsByFilmId(resultSet.getLong("id")))
+                .mpa(Mpa.builder().id(resultSet.getInt("mpa_id")).build())
                 .build();
+    }
+
+    private Film setAnotherFieldsForFilm(Film film) {
+        return setAnotherFieldsForFilms(List.of(film)).get(0);
+    }
+
+    private List<Film> setAnotherFieldsForFilms(List<Film> films) {
+        List<Long> filmIds = new ArrayList<>();
+        for (Film film : films) {
+            filmIds.add(film.getId());
+        }
+        List<Integer> mpaIds = new ArrayList<>();
+        for (Film film : films) {
+            mpaIds.add(film.getMpa().getId());
+        }
+        Map<Integer, Mpa> mpas = mpaService.getMpaRatingByMpaIds(mpaIds);
+        Map<Long, List<Like>> likes = likeStorage.getLikesByIds(filmIds);
+        Map<Long, List<Genre>> genres = genreService.getGenresByIds(filmIds);
+        Map<Long, List<Director>> directors = directorStorage.getDirectorsByFilmIds(filmIds);
+        for (Film film : films) {
+            film.setMpa(mpas.get(film.getMpa().getId()));
+            film.setDirectors(directors.get(film.getId()));
+            film.setGenres(genres.get(film.getId()));
+            film.setLikes(likes.get(film.getId()).stream().map(Like::getUserId).collect(Collectors.toList()));
+        }
+        return films;
     }
 
     private Map<String, Object> toMap(Film film) {

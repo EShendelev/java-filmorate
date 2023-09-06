@@ -46,10 +46,19 @@ public class FilmService {
     }
 
     public Film update(Film film) {
+        removeDuplicateDirectors(film);
         return filmStorage.update(film);
     }
 
+    private void removeDuplicateDirectors(Film film) {
+        List<Director> uniqueDirectors = film.getDirectors().stream()
+                .distinct()
+                .collect(Collectors.toList());
+        film.setDirectors(uniqueDirectors);
+    }
+
     public Film add(Film film) {
+        removeDuplicateDirectors(film);
         return filmStorage.add(film);
     }
 

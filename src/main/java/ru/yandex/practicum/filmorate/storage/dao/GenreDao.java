@@ -11,8 +11,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.GenreStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,10 +45,35 @@ public class GenreDao implements GenreStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToGenre, filmId);
     }
 
+    @Override
+    public Map<Long, List<Genre>> getGenresByIds(List<Long> filmIds) {
+        String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
+        String sqlQuery = "SELECT * FROM genres AS g " +
+                "INNER JOIN film_genre AS f ON g.id = f.genre_id " +
+                "WHERE f.film_id IN (%s)".formatted(inSql);
+        List<Genre> genresList = jdbcTemplate.query(sqlQuery, this::mapRowToGenreWithFilmId, filmIds.toArray());
+        Map<Long, List<Genre>> genresMap = new HashMap<>();
+        for (Long filmId : filmIds) {
+            genresMap.put(filmId, new ArrayList<>());
+        }
+        for (Genre genre : genresList) {
+            genresMap.get(genre.getFilmId()).add(genre);
+        }
+        return genresMap;
+    }
+
     private Genre mapRowToGenre(ResultSet resultSet, int rowNum) throws SQLException {
         return Genre.builder()
                 .id(resultSet.getInt("id"))
                 .name(resultSet.getString("name"))
+                .build();
+    }
+
+    private Genre mapRowToGenreWithFilmId(ResultSet resultSet, int rowNum) throws SQLException {
+        return Genre.builder()
+                .id(resultSet.getInt("id"))
+                .name(resultSet.getString("name"))
+                .filmId(resultSet.getLong("film_id"))
                 .build();
     }
 }

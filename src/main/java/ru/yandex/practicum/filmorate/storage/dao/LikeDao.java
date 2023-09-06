@@ -3,12 +3,13 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -38,6 +39,21 @@ public class LikeDao implements LikeStorage {
     }
 
     @Override
+    public Map<Long, List<Like>> getLikesByIds(List<Long> filmIds) {
+        String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
+        String sqlQuery = "SELECT * FROM likes WHERE film_id IN (%s)".formatted(inSql);
+        List<Like> likesList = jdbcTemplate.query(sqlQuery, this::mapRowToLike, filmIds.toArray());
+        Map<Long, List<Like>> likesMap = new HashMap<>();
+        for (Long filmId : filmIds) {
+            likesMap.put(filmId, new ArrayList<>());
+        }
+        for (Like like : likesList) {
+            likesMap.get(like.getFilmId()).add(like);
+        }
+        return likesMap;
+    }
+
+    @Override
     public List<Long> getTheBestFilms(int count) {
         String sqlQuery = "SELECT films.id " +
                 "FROM films " +
@@ -46,6 +62,13 @@ public class LikeDao implements LikeStorage {
                 "ORDER BY COUNT(DISTINCT likes.user_id) DESC " +
                 "LIMIT + ?";
         return jdbcTemplate.queryForList(sqlQuery, Long.class, count);
+    }
+
+    private Like mapRowToLike(ResultSet resultSet, int rowNum) throws SQLException {
+        return Like.builder()
+                .filmId(resultSet.getLong("film_id"))
+                .userId(resultSet.getLong("user_id"))
+                .build();
     }
 
     private Map<String, Object> toMap(Like like) {

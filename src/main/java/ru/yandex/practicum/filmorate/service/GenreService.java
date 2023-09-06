@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.GenreStorage;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,10 @@ public class GenreService {
 
     public Collection<Genre> getGenres() {
         return genreStorage.getGenres();
+    }
+
+    public Map<Long, List<Genre>> getGenresByIds(List<Long> filmIds) {
+        return genreStorage.getGenresByIds(filmIds);
     }
 
 }

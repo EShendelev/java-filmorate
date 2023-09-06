@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.MpaRatingStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.*;
 
 
 @Repository
@@ -36,6 +36,18 @@ public class MpaRatingDao implements MpaRatingStorage {
             throw new ObjectNotFoundException(String.format("МРА с ID %d не найдено", mpaId));
         }
         return mpa;
+    }
+
+    @Override
+    public Map<Integer, Mpa> getMpaRatingByMpaIds(List<Integer> mpaIds) {
+        String inSql = String.join(",", Collections.nCopies(mpaIds.size(), "?"));
+        String sqlQuery = "SELECT * FROM mpa_rating WHERE id IN (%s)".formatted(inSql);
+        List<Mpa> mpasList = jdbcTemplate.query(sqlQuery, this::mapRowToMpaRating, mpaIds.toArray());
+        Map<Integer, Mpa> mpasMap = new HashMap<>();
+        for (Mpa mpa : mpasList) {
+            mpasMap.put(mpa.getId(), mpa);
+        }
+        return mpasMap;
     }
 
     private Mpa mapRowToMpaRating(ResultSet resultSet, int i) throws SQLException {
