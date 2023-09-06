@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -127,5 +128,20 @@ public class UserDao implements UserStorage {
         }
         String sqlQuery = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(sqlQuery, id);
+    }
+
+    @Override
+    public Long getSimilarId(long id) {
+        String sqlQuery = "SELECT user_id FROM likes WHERE film_id IN (SELECT film_id FROM likes WHERE user_id = ?) " +
+                "AND NOT user_id = ? GROUP BY user_id ORDER BY COUNT(film_id) DESC LIMIT 1";
+        try {
+            Long similarId = jdbcTemplate.queryForObject(sqlQuery, Long.class, id, id);
+            if (similarId == null) {
+                return id;
+            }
+            return similarId;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 }

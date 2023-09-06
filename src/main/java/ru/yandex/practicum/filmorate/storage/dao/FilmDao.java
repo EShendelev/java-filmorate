@@ -11,10 +11,7 @@ import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
-import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
-import ru.yandex.practicum.filmorate.storage.interfaces.FilmGenreStorage;
-import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -131,14 +128,9 @@ public class FilmDao implements FilmStorage {
     }
 
     @Override
-    public List<Film> getRecommendations(long id) {
-        String sqlQuery = "SELECT * FROM films WHERE id IN (SELECT film_id FROM likes WHERE film_id IN" +
-                " (SELECT film_id FROM likes WHERE user_id IN ((SELECT user_id FROM likes WHERE film_id IN" +
-                " (SELECT film_id FROM likes WHERE user_id = ?)" +
-                " AND NOT user_id = ? GROUP BY user_id ORDER BY COUNT(film_id) DESC LIMIT 1), ?)" +
-                " GROUP BY film_id HAVING COUNT(user_id) = 1) AND user_id <> ?)";
-        log.info(String.format("Пользователь с id=%d получил список рекомендаций", id));
-        return setAnotherFieldsForFilms(jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id, id, id, id));
+    public List<Film> getLikedFilms(long id) {
+        String sql = "SELECT * FROM films f JOIN likes l ON f.id = l.film_id AND l.user_id = ?";
+        return setAnotherFieldsForFilms(jdbcTemplate.query(sql, this::mapRowToFilm, id));
     }
 
     @Override

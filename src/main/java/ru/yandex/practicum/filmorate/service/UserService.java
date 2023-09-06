@@ -94,4 +94,8 @@ public class UserService {
         }
         return events;
     }
+
+    public Long getSimilarId(long id) {
+        return userStorage.getSimilarId(id);
+    }
 }

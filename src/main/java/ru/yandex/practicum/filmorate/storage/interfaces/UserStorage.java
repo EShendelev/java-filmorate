@@ -21,4 +21,6 @@ public interface UserStorage {
     User findById(Long id);
 
     void deleteUserById(long id);
+
+    Long getSimilarId(long id);
 }

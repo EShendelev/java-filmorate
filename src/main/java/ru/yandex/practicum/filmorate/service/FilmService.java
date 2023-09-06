@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,7 +93,14 @@ public class FilmService {
     }
 
     public List<Film> getRecommendations(long id) {
-        return filmStorage.getRecommendations(id);
+        Long similarUserId = userService.getSimilarId(id);
+        if (similarUserId == null) {
+            return Collections.EMPTY_LIST;
+        }
+        List<Film> likedByUser = filmStorage.getLikedFilms(id);
+        List<Film> likedBySimilar = filmStorage.getLikedFilms(similarUserId);
+        likedBySimilar.removeAll(likedByUser);
+        return likedBySimilar;
     }
 
     public List<Film> getFilmsByDirectorSorted(int directorId, SortBy sortBy) {
