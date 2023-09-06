@@ -48,9 +48,9 @@ public class GenreDao implements GenreStorage {
     @Override
     public Map<Long, List<Genre>> getGenresByIds(List<Long> filmIds) {
         String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
-        String sqlQuery = "SELECT * FROM genres AS g " +
+        String sqlQuery = String.format("SELECT * FROM genres AS g " +
                 "INNER JOIN film_genre AS f ON g.id = f.genre_id " +
-                "WHERE f.film_id IN (%s)".formatted(inSql);
+                "WHERE f.film_id IN (%s)", inSql);
         List<Genre> genresList = jdbcTemplate.query(sqlQuery, this::mapRowToGenreWithFilmId, filmIds.toArray());
         Map<Long, List<Genre>> genresMap = new HashMap<>();
         for (Long filmId : filmIds) {

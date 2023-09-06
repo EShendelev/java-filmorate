@@ -37,9 +37,9 @@ public class DirectorDao implements DirectorStorage {
     @Override
     public Map<Long, List<Director>> getDirectorsByFilmIds(List<Long> filmIds) {
         String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
-        String sqlQuery = "SELECT * FROM directors AS d " +
+        String sqlQuery = String.format("SELECT * FROM directors AS d " +
                 "INNER JOIN film_directors AS f ON d.id = f.director_id " +
-                "WHERE f.film_id IN (%s)".formatted(inSql);
+                "WHERE f.film_id IN (%s)", inSql);
         List<Director> directorsList = jdbcTemplate.query(sqlQuery, this::mapRowToDirectorWithFilmId, filmIds.toArray());
         Map<Long, List<Director>> directorsMap = new HashMap<>();
         for (Long filmId : filmIds) {
