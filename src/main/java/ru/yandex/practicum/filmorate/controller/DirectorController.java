@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 
@@ -23,7 +24,8 @@ public class DirectorController {
     }
 
     @GetMapping("/{id}")
-    public Director getGenreById(@PathVariable int id) {
+    public Director getDirectorById(@PathVariable int id) {
+        validateDirectorId(id);
         log.info("Вывод режиссера id {}", id);
         return directorService.getDirectorById(id);
     }
@@ -31,7 +33,7 @@ public class DirectorController {
     @PostMapping
     public Director addDirector(@RequestBody @Valid Director director) {
         Director directorAdded = directorService.addDirector(director);
-        log.info(String.format("Режиссер \"%s\" добавлен", directorAdded.getName()));
+        log.info(String.format("Режиссер \"%s\" добавлен, c id = \"%s\"", directorAdded.getName(), directorAdded.getId()));
         return directorAdded;
     }
 
@@ -44,7 +46,15 @@ public class DirectorController {
 
     @DeleteMapping("/{id}")
     public void deleteDirector(@PathVariable int id) {
+        validateDirectorId(id);
         directorService.deleteDirector(id);
         log.info(String.format("Режиссер id %s удален", id));
+    }
+
+    boolean validateDirectorId(Integer id) {
+        if (id <= 0) {
+            throw new ObjectNotFoundException("Ошибка: id не может быть меньше или равно нулю.");
+        }
+        return true;
     }
 }

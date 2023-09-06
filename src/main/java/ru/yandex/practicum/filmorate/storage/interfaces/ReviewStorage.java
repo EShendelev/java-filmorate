@@ -10,6 +10,7 @@ import java.util.Collection;
 public interface ReviewStorage {
     /**
      * Добавить отзыв.
+     *
      * @param review Отзыв для добавления
      * @return Добавленный отзыв
      */
@@ -17,6 +18,7 @@ public interface ReviewStorage {
 
     /**
      * Обновить отзыв.
+     *
      * @param review Отзыв для обновления
      * @return Обновлённый отзыв
      */
@@ -24,12 +26,14 @@ public interface ReviewStorage {
 
     /**
      * Удалить отзыв.
+     *
      * @param reviewId Идентификатор отзыва
      */
     void deleteReview(int reviewId);
 
     /**
      * Получить отзыв по идентификатору.
+     *
      * @param reviewId Идентификатор отзыва
      * @return Полученный отзыв
      */
@@ -37,21 +41,24 @@ public interface ReviewStorage {
 
     /**
      * Получить все отзывы, сортированные по рейтингу полезности.
+     *
      * @return Список отзывов
      */
     Collection<Review> getAllReviews();
 
     /**
      * Поставить лайк/дизлайк отзыву.
-     * @param userId Идентификатор пользователя
+     *
+     * @param userId   Идентификатор пользователя
      * @param reviewId Идентификатор отзыва
-     * @param isLike Лайк/дизлайк
+     * @param isLike   Лайк/дизлайк
      */
     void addMarkToReview(long userId, int reviewId, boolean isLike);
 
     /**
      * Убрать оценку отзыву.
-     * @param userId Идентификатор пользователя
+     *
+     * @param userId   Идентификатор пользователя
      * @param reviewId Идентификатор отзыва
      */
     void removeMarkFromReview(long userId, int reviewId);
@@ -60,8 +67,9 @@ public interface ReviewStorage {
 
     /**
      * Получить все отзывы к фильму по его идентификатору, сортированные по рейтингу полезности.
+     *
      * @param filmId Идентификатор фильма
-     * @param count Количество отзывов
+     * @param count  Количество отзывов
      * @return Список отзывов
      */
     Collection<Review> getReviewsByFilmId(long filmId, int count);
