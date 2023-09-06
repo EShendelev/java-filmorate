@@ -97,7 +97,7 @@ public class FilmService {
 //    }
 
     public List<Film> getRecommendations(long userId) {
-        
+
         List<Long> similarInterestUsers = filmStorage.getSimilarFilmIds(userId);
 
         if (similarInterestUsers.isEmpty()) {
