@@ -28,15 +28,10 @@ public class FilmService {
         if (checkFilm && checkUser) {
             if (like) {
                 done = likeStorage.addLike(filmId, userId);
-                eventStorage.add(userId, filmId, EventTypes.LIKE,EventOperations.ADD);
+                eventStorage.add(userId, filmId, EventTypes.LIKE, EventOperations.ADD);
             } else {
                 done = likeStorage.unlike(filmId, userId);
-                eventStorage.add(userId, filmId, EventTypes.LIKE,EventOperations.REMOVE);
-
-                eventStorage.add(userId, filmId, EventTypes.LIKE.toString(), EventOperations.ADD.name());
-            } else {
-                done = likeStorage.unlike(filmId, userId);
-                eventStorage.add(userId, filmId, EventTypes.LIKE.toString(), EventOperations.REMOVE.name());
+                eventStorage.add(userId, filmId, EventTypes.LIKE, EventOperations.REMOVE);
             }
         }
         return done;
