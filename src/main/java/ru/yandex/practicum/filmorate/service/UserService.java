@@ -27,7 +27,7 @@ public class UserService {
         boolean checkFriend = userStorage.checkById(friendId);
         if (checkFriend && checkUser) {
             boolean addition = friendStorage.addFriend(userId, friendId);
-            eventStorage.add(userId, friendId, EventTypes.FRIEND.toString(), EventOperations.ADD.name());
+            eventStorage.add(userId, friendId, EventTypes.FRIEND, EventOperations.ADD);
         }
     }
 
@@ -40,7 +40,7 @@ public class UserService {
                 throw new ObjectNotFoundException(String.format("Пользователь с id %d не в списке друзей" +
                         " у пользователя с id %s", friendId, userId));
             }
-            eventStorage.add(userId, friendId, EventTypes.FRIEND.toString(), EventOperations.REMOVE.name());
+            eventStorage.add(userId, friendId, EventTypes.FRIEND, EventOperations.REMOVE);
         }
     }
 
