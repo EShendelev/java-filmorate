@@ -40,7 +40,7 @@ public class LikeDao implements LikeStorage {
     @Override
     public Map<Long, List<Like>> getLikesByIds(List<Long> filmIds) {
         String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
-        String sqlQuery = "SELECT * FROM likes WHERE film_id IN (%s)".formatted(inSql);
+        String sqlQuery = String.format("SELECT * FROM likes WHERE film_id IN (%s)", inSql);
         List<Like> likesList = jdbcTemplate.query(sqlQuery, this::mapRowToLike, filmIds.toArray());
         Map<Long, List<Like>> likesMap = new HashMap<>();
         for (Long filmId : filmIds) {

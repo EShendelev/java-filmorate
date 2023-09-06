@@ -41,7 +41,7 @@ public class MpaRatingDao implements MpaRatingStorage {
     @Override
     public Map<Integer, Mpa> getMpaRatingByMpaIds(List<Integer> mpaIds) {
         String inSql = String.join(",", Collections.nCopies(mpaIds.size(), "?"));
-        String sqlQuery = "SELECT * FROM mpa_rating WHERE id IN (%s)".formatted(inSql);
+        String sqlQuery = String.format("SELECT * FROM mpa_rating WHERE id IN (%s)", inSql);
         List<Mpa> mpasList = jdbcTemplate.query(sqlQuery, this::mapRowToMpaRating, mpaIds.toArray());
         Map<Integer, Mpa> mpasMap = new HashMap<>();
         for (Mpa mpa : mpasList) {
