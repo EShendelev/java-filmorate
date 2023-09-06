@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
@@ -32,6 +35,7 @@ public class FilmDao implements FilmStorage {
     private final GenreService genreService;
     private final FilmGenreStorage filmGenreStorage;
     private final DirectorStorage directorStorage;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
     public Collection<Film> findAll() {
@@ -292,5 +296,24 @@ public class FilmDao implements FilmStorage {
         }
         String sqlQuery = "DELETE FROM films WHERE id = ?";
         jdbcTemplate.update(sqlQuery, id);
+    }
+
+    @Override
+    public List<Long> getSimilarFilmIds(Long userId) {
+        String sqlQuery = "SELECT fl2.user_id " +
+                "FROM likes AS fl1 " +
+                 "JOIN likes AS fl2 ON fl1.film_id = fl2.film_id " +
+                "WHERE fl1.user_id = ? " +
+                "AND fl1.user_id <> fl2.user_id " +
+                "GROUP BY fl1.user_id, fl2.user_id " +
+                "ORDER BY COUNT(fl1.film_id) DESC";
+        return jdbcTemplate.queryForList(sqlQuery, Long.class, userId);
+    }
+
+    @Override
+    public List<Film> getFilmsByListIds(List<Long> ids) {
+        SqlParameterSource parameters = new MapSqlParameterSource("ids", ids);
+        String sqlQuery = "SELECT * FROM films WHERE id IN (:ids)";
+        return namedParameterJdbcTemplate.query(sqlQuery, parameters, this::mapRowToFilm);
     }
 }

@@ -30,4 +30,8 @@ public interface FilmStorage {
     Collection<Film> getCommonFilms(Integer id, Integer friendId);
 
     void deleteFilmById(long id);
+
+    List<Long> getSimilarFilmIds(Long userId);
+
+    List<Film> getFilmsByListIds(List<Long> ids);
 }
