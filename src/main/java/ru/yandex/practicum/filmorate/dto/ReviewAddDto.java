@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
-public class ReviewAddUpdateDto {
+public class ReviewAddDto {
     protected int reviewId;
 
     @NotBlank
@@ -23,6 +23,4 @@ public class ReviewAddUpdateDto {
     protected long userId;
 
     protected long filmId;
-
-    protected int useful = 0;
 }

@@ -46,7 +46,7 @@ public class EventDao implements EventStorage {
     public List<Event> getUserEvents(long userId) {
         String sqlQuery = "SELECT * FROM events " +
                 "WHERE user_id = ? " +
-                "ORDER BY user_id DESC";
+                "ORDER BY EVENT_TIME";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFeed, userId);
     }
 

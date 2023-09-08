@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.ReviewAddUpdateDto;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.EventOperations;
 import ru.yandex.practicum.filmorate.model.EventTypes;
@@ -40,19 +39,12 @@ public class ReviewService {
         boolean checkUser = userService.checkById(userId);
 
         if (checkFilm && checkUser) {
-            ReviewAddUpdateDto reviewDto = ReviewAddUpdateDto.builder()
-                    .reviewId(review.getReviewId())
-                    .isPositive(review.getIsPositive())
-                    .content(review.getContent())
-                    .filmId(filmId)
-                    .userId(userId)
-                    .build();
             if (isAdd) {
-                result = reviewStorage.addReview(reviewDto);
+                result = reviewStorage.addReview(review);
                 eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW, EventOperations.ADD);
                 return result;
             } else {
-                result = reviewStorage.updateReview(reviewDto);
+                result = reviewStorage.updateReview(review);
                 eventStorage.add(result.getUserId(), result.getReviewId(), EventTypes.REVIEW, EventOperations.UPDATE);
                 return result;
             }
@@ -99,13 +91,6 @@ public class ReviewService {
         if (!filmStorage.checkById(filmId)) {
             log.warn("Нет фильма с id = " + filmId);
             throw new FilmNotExistException("Нет фильма с id = " + filmId);
-        }
-
-        if (count == null) {
-            return reviewStorage.getReviewsByFilmId(filmId, 10);
-        }
-        if (count < 0) {
-            throw new IncorrectParameterException("count - не может быть меньше нуля!");
         }
         return reviewStorage.getReviewsByFilmId(filmId, count);
     }
