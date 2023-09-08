@@ -178,10 +178,11 @@ public class FilmDao implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
-        String sql = "SELECT f.*, COUNT(l.film_id) AS like_count " +
+        String sql = "SELECT f.*, GROUP_CONCAT(g.name) AS genres, COUNT(l.film_id) AS like_count " +
                 "FROM films f " +
                 "LEFT JOIN likes l ON f.id = l.film_id " +
                 "LEFT JOIN film_genre fg ON f.id = fg.film_id " +
+                "LEFT JOIN genres g ON fg.genre_id = g.id " +
                 "WHERE 1=1";
         List<Object> params = new ArrayList<>();
 
