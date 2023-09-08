@@ -136,12 +136,9 @@ public class UserDao implements UserStorage {
                 "AND NOT user_id = ? GROUP BY user_id ORDER BY COUNT(film_id) DESC LIMIT 1";
         try {
             Long similarId = jdbcTemplate.queryForObject(sqlQuery, Long.class, id, id);
-            if (similarId == null) {
-                return id;
-            }
             return similarId;
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            throw new ObjectNotFoundException("Не удалось найти подходящего пользователя для рекомендаций");
         }
     }
 }

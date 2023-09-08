@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.interfaces.EventStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
@@ -93,8 +94,10 @@ public class FilmService {
     }
 
     public List<Film> getRecommendations(long id) {
-        Long similarUserId = userService.getSimilarId(id);
-        if (similarUserId == null) {
+        Long similarUserId;
+        try {
+            similarUserId = userService.getSimilarId(id);
+        } catch (ObjectNotFoundException e) {
             return Collections.EMPTY_LIST;
         }
         List<Film> likedByUser = filmStorage.getLikedFilms(id);
