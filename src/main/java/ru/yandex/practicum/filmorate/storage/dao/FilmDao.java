@@ -168,12 +168,12 @@ public class FilmDao implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
-        String sql = "SELECT f.*, GROUP_CONCAT(g.name) AS genres, COUNT(l.film_id) AS like_count " +
+        String sql = "SELECT f.*, COALESCE(like_count, 0) AS like_count " +
                 "FROM films f " +
-                "LEFT JOIN likes l ON f.id = l.film_id " +
+                "INNER JOIN (SELECT film_id, COUNT(*) AS like_count FROM likes GROUP BY film_id) l " +
+                "ON f.id = l.film_id " +
                 "LEFT JOIN film_genre fg ON f.id = fg.film_id " +
-                "LEFT JOIN genres g ON fg.genre_id = g.id " +
-                "WHERE 1=1";
+                "WHERE like_count > 0";
         List<Object> params = new ArrayList<>();
 
         if (genreId != null) {
@@ -186,7 +186,7 @@ public class FilmDao implements FilmStorage {
             params.add(year);
         }
 
-        sql += " GROUP BY f.id, f.name " +
+        sql += " GROUP BY f.id, f.name, like_count " +
                 "ORDER BY like_count DESC LIMIT ?";
         params.add(count);
         Collection<Film> films = setAnotherFieldsForFilms(jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray()));
