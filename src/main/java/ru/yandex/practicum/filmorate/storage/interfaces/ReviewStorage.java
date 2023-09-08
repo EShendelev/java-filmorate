@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.interfaces;
 
-import ru.yandex.practicum.filmorate.dto.ReviewAddUpdateDto;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.util.Collection;
@@ -15,7 +14,7 @@ public interface ReviewStorage {
      * @param review Отзыв для добавления
      * @return Добавленный отзыв
      */
-    Review addReview(ReviewAddUpdateDto review);
+    Review addReview(Review review);
 
     /**
      * Обновить отзыв.
@@ -23,7 +22,7 @@ public interface ReviewStorage {
      * @param review Отзыв для обновления
      * @return Обновлённый отзыв
      */
-    Review updateReview(ReviewAddUpdateDto review);
+    Review updateReview(Review review);
 
     /**
      * Удалить отзыв.

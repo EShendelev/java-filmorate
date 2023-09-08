@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.practicum.filmorate.dto.ReviewAddUpdateDto;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.interfaces.ReviewStorage;
@@ -23,7 +22,7 @@ public class ReviewDao implements ReviewStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Review addReview(ReviewAddUpdateDto review) {
+    public Review addReview(Review review) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("reviews")
                 .usingGeneratedKeyColumns("id");
@@ -33,7 +32,7 @@ public class ReviewDao implements ReviewStorage {
     }
 
     @Override
-    public Review updateReview(ReviewAddUpdateDto review) {
+    public Review updateReview(Review review) {
         if (!checkById(review.getReviewId())) {
             throw new ObjectNotFoundException("Нет отзыва с id = " + review.getReviewId());
         }
