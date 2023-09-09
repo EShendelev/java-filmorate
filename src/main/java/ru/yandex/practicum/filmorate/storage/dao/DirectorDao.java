@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.CommonDatabaseException;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
@@ -13,7 +14,11 @@ import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -41,14 +46,7 @@ public class DirectorDao implements DirectorStorage {
                 "INNER JOIN film_directors AS f ON d.id = f.director_id " +
                 "WHERE f.film_id IN (%s)", inSql);
         List<Director> directorsList = jdbcTemplate.query(sqlQuery, this::mapRowToDirectorWithFilmId, filmIds.toArray());
-        Map<Long, List<Director>> directorsMap = new HashMap<>();
-        for (Long filmId : filmIds) {
-            directorsMap.put(filmId, new ArrayList<>());
-        }
-        for (Director director : directorsList) {
-            directorsMap.get(director.getFilmId()).add(director);
-        }
-        return directorsMap;
+        return directorsList.stream().collect(Collectors.groupingBy(Director::getFilmId));
     }
 
     @Override
@@ -102,8 +100,8 @@ public class DirectorDao implements DirectorStorage {
         String sqlQuery = "SELECT * FROM directors WHERE id = ?";
         try {
             director = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToDirector, id);
-        } catch (IncorrectResultSizeDataAccessException e) {
-            throw new ObjectNotFoundException(String.format("Режиссер с ID %d не найден", id));
+        } catch (DataAccessException e) {
+            throw new CommonDatabaseException("Неожиданная ошибка работы с БД", e);
         }
         return director;
     }

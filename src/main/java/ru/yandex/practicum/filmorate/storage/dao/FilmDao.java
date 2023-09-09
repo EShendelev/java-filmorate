@@ -3,15 +3,20 @@ package ru.yandex.practicum.filmorate.storage.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.CommonDatabaseException;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
-import ru.yandex.practicum.filmorate.storage.interfaces.*;
+import ru.yandex.practicum.filmorate.storage.interfaces.DirectorStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.FilmGenreStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -213,6 +218,8 @@ public class FilmDao implements FilmStorage {
             film = setAnotherFieldsForFilm(jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id));
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new ObjectNotFoundException(String.format("Фильм с id %d не найден", id));
+        } catch (DataAccessException e) {
+            throw new CommonDatabaseException("Неожиданная ошибка работы с БД", e);
         }
         return film;
     }
@@ -234,23 +241,17 @@ public class FilmDao implements FilmStorage {
     }
 
     private List<Film> setAnotherFieldsForFilms(List<Film> films) {
-        List<Long> filmIds = new ArrayList<>();
-        for (Film film : films) {
-            filmIds.add(film.getId());
-        }
-        List<Integer> mpaIds = new ArrayList<>();
-        for (Film film : films) {
-            mpaIds.add(film.getMpa().getId());
-        }
+        List<Long> filmIds = films.stream().map(Film::getId).collect(Collectors.toList());
+        List<Integer> mpaIds = films.stream().map(f -> f.getMpa().getId()).collect(Collectors.toList());
         Map<Integer, Mpa> mpas = mpaService.getMpaRatingByMpaIds(mpaIds);
         Map<Long, List<Like>> likes = likeStorage.getLikesByIds(filmIds);
         Map<Long, List<Genre>> genres = genreService.getGenresByIds(filmIds);
         Map<Long, List<Director>> directors = directorStorage.getDirectorsByFilmIds(filmIds);
         for (Film film : films) {
             film.setMpa(mpas.get(film.getMpa().getId()));
-            film.setDirectors(directors.get(film.getId()));
-            film.setGenres(genres.get(film.getId()));
-            film.setLikes(likes.get(film.getId()).stream().map(Like::getUserId).collect(Collectors.toList()));
+            film.setDirectors(directors.getOrDefault(film.getId(), new ArrayList<>()));
+            film.setGenres(genres.getOrDefault(film.getId(), new ArrayList<>()));
+            film.setLikes(likes.getOrDefault(film.getId(), new ArrayList<>()).stream().map(Like::getUserId).collect(Collectors.toList()));
         }
         return films;
     }

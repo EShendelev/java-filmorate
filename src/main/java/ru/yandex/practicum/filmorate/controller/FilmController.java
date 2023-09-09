@@ -78,14 +78,7 @@ public class FilmController {
 
     @GetMapping("/director/{directorId}")
     public List<Film> getFilmsByDirectorSorted(@PathVariable int directorId, @RequestParam String sortBy) {
-        SortBy sortByEnum;
-        if (sortBy.equals("likes")) {
-            sortByEnum = SortBy.LIKES;
-        } else if (sortBy.equals("year")) {
-            sortByEnum = SortBy.YEAR;
-        } else {
-            sortByEnum = SortBy.NO_SORT;
-        }
+        SortBy sortByEnum = SortBy.valueOf(sortBy.toUpperCase());
         return filmService.getFilmsByDirectorSorted(directorId, sortByEnum);
     }
 

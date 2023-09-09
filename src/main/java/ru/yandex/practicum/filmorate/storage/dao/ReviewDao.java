@@ -1,12 +1,13 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.filmorate.exception.CommonDatabaseException;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.interfaces.ReviewStorage;
@@ -64,8 +65,8 @@ public class ReviewDao implements ReviewStorage {
         String sqlQuery = "SELECT * FROM REVIEWS WHERE id = ?";
         try {
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToReview, reviewId);
-        } catch (IncorrectResultSizeDataAccessException e) {
-            throw new ObjectNotFoundException(String.format("Отзыв с id %s не найден", reviewId));
+        } catch (DataAccessException e) {
+            throw new CommonDatabaseException("Неожиданная ошибка работы с БД", e);
         }
     }
 
