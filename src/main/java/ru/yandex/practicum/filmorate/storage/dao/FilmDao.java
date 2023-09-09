@@ -192,7 +192,6 @@ public class FilmDao implements FilmStorage {
         }
 
         sql += " GROUP BY f.id, f.name " +
-                "HAVING COUNT(DISTINCT l.user_id) > 0 " +
                 "ORDER BY like_count DESC LIMIT ?";
         params.add(count);
         Collection<Film> films = setAnotherFieldsForFilms(jdbcTemplate.query(sql, this::mapRowToFilm, params.toArray()));
