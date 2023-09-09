@@ -3,11 +3,11 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.DirectorService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
 
 @RestController
@@ -24,8 +24,7 @@ public class DirectorController {
     }
 
     @GetMapping("/{id}")
-    public Director getDirectorById(@PathVariable int id) {
-        validateDirectorId(id);
+    public Director getDirectorById(@PathVariable @Positive int id) {
         log.info("Вывод режиссера id {}", id);
         return directorService.getDirectorById(id);
     }
@@ -45,16 +44,8 @@ public class DirectorController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDirector(@PathVariable int id) {
-        validateDirectorId(id);
+    public void deleteDirector(@PathVariable @Positive int id) {
         directorService.deleteDirector(id);
         log.info(String.format("Режиссер id %s удален", id));
-    }
-
-    boolean validateDirectorId(Integer id) {
-        if (id <= 0) {
-            throw new ObjectNotFoundException("Ошибка: id не может быть меньше или равно нулю.");
-        }
-        return true;
     }
 }

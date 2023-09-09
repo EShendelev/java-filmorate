@@ -8,7 +8,11 @@ import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -42,14 +46,7 @@ public class LikeDao implements LikeStorage {
         String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
         String sqlQuery = String.format("SELECT * FROM likes WHERE film_id IN (%s)", inSql);
         List<Like> likesList = jdbcTemplate.query(sqlQuery, this::mapRowToLike, filmIds.toArray());
-        Map<Long, List<Like>> likesMap = new HashMap<>();
-        for (Long filmId : filmIds) {
-            likesMap.put(filmId, new ArrayList<>());
-        }
-        for (Like like : likesList) {
-            likesMap.get(like.getFilmId()).add(like);
-        }
-        return likesMap;
+        return likesList.stream().collect(Collectors.groupingBy(Like::getFilmId));
     }
 
     @Override
