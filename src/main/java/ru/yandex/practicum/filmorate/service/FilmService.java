@@ -1,17 +1,18 @@
 package ru.yandex.practicum.filmorate.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.storage.interfaces.EventStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final LikeStorage likeStorage;
     private final UserService userService;
-
+    private final EventStorage eventStorage;
 
     public boolean doLike(Long filmId, Long userId, boolean like) {
         boolean checkFilm = filmStorage.checkById(filmId);
@@ -29,20 +30,13 @@ public class FilmService {
         if (checkFilm && checkUser) {
             if (like) {
                 done = likeStorage.addLike(filmId, userId);
+                eventStorage.add(userId, filmId, EventTypes.LIKE, EventOperations.ADD);
             } else {
                 done = likeStorage.unlike(filmId, userId);
+                eventStorage.add(userId, filmId, EventTypes.LIKE, EventOperations.REMOVE);
             }
         }
         return done;
-    }
-
-    public Collection<Film> findPopularFilms(Integer count) {
-        return filmStorage.findAll().stream()
-                .sorted((p0, p1) -> {
-                    int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
-                    return -1 * comp;
-                })
-                .limit(count).collect(Collectors.toList());
     }
 
     public Film findById(Long id) {
@@ -54,15 +48,37 @@ public class FilmService {
     }
 
     public Film update(Film film) {
+        removeDuplicateDirectors(film);
         return filmStorage.update(film);
     }
 
+    private void removeDuplicateDirectors(Film film) {
+        List<Director> uniqueDirectors = film.getDirectors().stream()
+                .distinct()
+                .collect(Collectors.toList());
+        film.setDirectors(uniqueDirectors);
+    }
+
     public Film add(Film film) {
+        removeDuplicateDirectors(film);
         return filmStorage.add(film);
     }
 
     public Collection<Film> findAll() {
         return filmStorage.findAll();
+    }
+
+    public Collection<Film> getPopularFilm(Integer count, Integer genreId, Integer year) {
+        return filmStorage.getPopularFilm(count, genreId, year);
+    }
+
+    public Collection<Film> getCommonFilms(Integer userId, Integer friendId) {
+        return filmStorage.getCommonFilms(userId, friendId).stream()
+                .sorted((p0, p1) -> {
+                    int comp = p0.getLikesCount().compareTo(p1.getLikesCount());
+                    return -1 * comp;
+                })
+                .collect(Collectors.toList());
     }
 
     public List<Long> getListOfLikes(long id) {
@@ -71,5 +87,30 @@ public class FilmService {
             films = likeStorage.getLikesList(id);
         }
         return films;
+    }
+
+    public void deleteFilmById(long id) {
+        filmStorage.deleteFilmById(id);
+    }
+
+    public List<Film> getRecommendations(long id) {
+        Long similarUserId;
+        try {
+            similarUserId = userService.getSimilarId(id);
+        } catch (ObjectNotFoundException e) {
+            return Collections.EMPTY_LIST;
+        }
+        List<Film> likedByUser = filmStorage.getLikedFilms(id);
+        List<Film> likedBySimilar = filmStorage.getLikedFilms(similarUserId);
+        likedBySimilar.removeAll(likedByUser);
+        return likedBySimilar;
+    }
+
+    public List<Film> getFilmsByDirectorSorted(int directorId, SortBy sortBy) {
+        return filmStorage.getFilmsByDirectorSorted(directorId, sortBy);
+    }
+
+    public List<Film> searchByFilmAndDirectorSorted(String query, SearchBy searchBy) {
+        return filmStorage.searchByFilmAndDirectorSorted(query, searchBy);
     }
 }

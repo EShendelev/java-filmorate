@@ -2,14 +2,17 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.storage.interfaces.LikeStorage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,13 +21,12 @@ public class LikeDao implements LikeStorage {
 
     @Override
     public boolean addLike(long filmId, long userId) {
-        Like like = Like.builder()
-                .filmId(filmId)
-                .userId(userId)
-                .build();
-        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("likes");
-        return simpleJdbcInsert.execute(toMap(like)) > 0;
+        if (checkLike(userId, filmId)) {
+            return true;
+        }
+        String sql = "MERGE INTO likes (FILM_ID, USER_ID) KEY(FILM_ID, USER_ID) VALUES (?, ?)";
+        int rowsAffected = jdbcTemplate.update(sql, filmId, userId);
+        return rowsAffected > 0;
     }
 
     @Override
@@ -40,6 +42,14 @@ public class LikeDao implements LikeStorage {
     }
 
     @Override
+    public Map<Long, List<Like>> getLikesByIds(List<Long> filmIds) {
+        String inSql = String.join(",", Collections.nCopies(filmIds.size(), "?"));
+        String sqlQuery = String.format("SELECT * FROM likes WHERE film_id IN (%s)", inSql);
+        List<Like> likesList = jdbcTemplate.query(sqlQuery, this::mapRowToLike, filmIds.toArray());
+        return likesList.stream().collect(Collectors.groupingBy(Like::getFilmId));
+    }
+
+    @Override
     public List<Long> getTheBestFilms(int count) {
         String sqlQuery = "SELECT films.id " +
                 "FROM films " +
@@ -50,10 +60,22 @@ public class LikeDao implements LikeStorage {
         return jdbcTemplate.queryForList(sqlQuery, Long.class, count);
     }
 
+    private Like mapRowToLike(ResultSet resultSet, int rowNum) throws SQLException {
+        return Like.builder()
+                .filmId(resultSet.getLong("film_id"))
+                .userId(resultSet.getLong("user_id"))
+                .build();
+    }
+
     private Map<String, Object> toMap(Like like) {
         Map<String, Object> values = new HashMap<>();
         values.put("user_Id", like.getUserId());
         values.put("film_Id", like.getFilmId());
         return values;
+    }
+
+    private boolean checkLike(long userId, long filmId) {
+        String sqlQuery = "SELECT COUNT(*) FROM likes WHERE user_id = ? AND film_id = ?";
+        return jdbcTemplate.queryForObject(sqlQuery, Integer.class, userId, filmId) > 0;
     }
 }

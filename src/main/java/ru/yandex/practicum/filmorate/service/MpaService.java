@@ -6,6 +6,8 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.interfaces.MpaRatingStorage;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -18,5 +20,9 @@ public class MpaService {
 
     public Mpa getMpaRatingById(int id) {
         return mpaRatingStorage.getMpaById(id);
+    }
+
+    public Map<Integer, Mpa> getMpaRatingByMpaIds(List<Integer> mpaIds) {
+        return mpaRatingStorage.getMpaRatingByMpaIds(mpaIds);
     }
 }

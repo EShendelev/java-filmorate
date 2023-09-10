@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.CommonDatabaseException;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.interfaces.FriendStorage;
@@ -64,8 +67,10 @@ public class UserDao implements UserStorage {
         String sqlQuery = "SELECT * FROM users WHERE id = ?";
         try {
             user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
-        } catch (DataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
+        } catch (DataAccessException e) {
+            throw new CommonDatabaseException("Неожиданная ошибка работы с БД", e);
         }
         return user;
     }
@@ -112,13 +117,32 @@ public class UserDao implements UserStorage {
         }
         String sqlQuery = "SELECT COUNT(*) FROM users WHERE id = ?";
         boolean exists = false;
-        int count = 0;
-        try {
-            count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
-        } catch (DataAccessException e) {
+        int count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, id);
+        if (count == 0) {
             throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
         }
         exists = count > 0;
         return exists;
+    }
+
+    @Override
+    public void deleteUserById(long id) {
+        if (!checkById(id)) {
+            throw new ObjectNotFoundException(String.format("Пользователь с id %s не найден", id));
+        }
+        String sqlQuery = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(sqlQuery, id);
+    }
+
+    @Override
+    public Long getSimilarId(long id) {
+        String sqlQuery = "SELECT user_id FROM likes WHERE film_id IN (SELECT film_id FROM likes WHERE user_id = ?) " +
+                "AND NOT user_id = ? GROUP BY user_id ORDER BY COUNT(film_id) DESC LIMIT 1";
+        try {
+            Long similarId = jdbcTemplate.queryForObject(sqlQuery, Long.class, id, id);
+            return similarId;
+        } catch (EmptyResultDataAccessException e) {
+            throw new ObjectNotFoundException("Не удалось найти подходящего пользователя для рекомендаций");
+        }
     }
 }

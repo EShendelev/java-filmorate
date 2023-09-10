@@ -31,6 +31,7 @@ public class Film {
     private Mpa mpa;
     private List<Long> likes;
     private List<Genre> genres;
+    private List<Director> directors;
 
     public Integer getLikesCount() {
         return likes.size();
@@ -41,5 +42,12 @@ public class Film {
             return new ArrayList<>();
         }
         return this.genres;
+    }
+
+    public List<Director> getDirectors() {
+        if (this.directors == null) {
+            return new ArrayList<>();
+        }
+        return this.directors;
     }
 }

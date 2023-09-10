@@ -1,10 +1,18 @@
-DELETE FROM likes;
-DELETE FROM film_genre;
-DELETE FROM friends;
-DELETE FROM users;
-DELETE FROM films;
-ALTER TABLE users ALTER COLUMN id RESTART with 1;
-ALTER TABLE films ALTER COLUMN id RESTART with 1;
+--DELETE FROM likes;
+--DELETE FROM film_genre;
+--DELETE FROM film_directors;
+--DELETE FROM friends;
+--DELETE FROM users;
+--DELETE FROM films;
+--DELETE FROM directors;
+--DELETE FROM reviews;
+--DELETE FROM user_review;
+--DELETE FROM events;
+--ALTER TABLE users ALTER COLUMN id RESTART with 1;
+--ALTER TABLE films ALTER COLUMN id RESTART with 1;
+--ALTER TABLE directors ALTER COLUMN id RESTART with 1;
+--ALTER TABLE reviews ALTER COLUMN ID RESTART with 1;
+--ALTER TABLE events ALTER COLUMN event_id RESTART with 1;
 
 MERGE INTO mpa_rating (id, name)
     VALUES (1, 'G'),
